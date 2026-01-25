@@ -60,7 +60,7 @@ function TextPrompts() {
         <main className="container fade-in" style={{ padding: '60px 0' }}>
             <div style={{ textAlign: 'center', marginBottom: '40px' }}>
                 <h1 className="ndot" style={{ fontSize: 'min(56px, 12vw)', marginBottom: '16px', textTransform: 'lowercase' }}>
-                    text <span style={{ color: 'var(--accent)' }}>engines</span>.
+                    text <span style={{ color: 'var(--accent)' }}>prompts</span>.
                 </h1>
                 <p style={{ color: 'var(--text-dim)', fontSize: 'min(18px, 4.5vw)', maxWidth: '600px', margin: '0 auto 40px', textTransform: 'lowercase', padding: '0 20px' }}>
                     access the complete raw database of 10,000+ nano banana pro engines. paginated and optimized.

@@ -45,7 +45,7 @@ function Footer() {
                             we do not store your gemini api key. we recommend deleting your api key after use for maximum security.
                         </p>
                         <p style={{ color: 'var(--text-dim)', fontSize: '12px', marginBottom: '12px', textTransform: 'lowercase' }}>
-                            contact: <a href="mailto:aryaamn@vanco.ai" style={{ color: 'var(--text)', textDecoration: 'none' }}>aryaman@vanco.ai</a>
+                            contact: <a href="mailto:aryaman@vanco.ai" style={{ color: 'var(--text)', textDecoration: 'none' }}>aryaman@vanco.ai</a>
                         </p>
                         <p style={{ color: 'var(--text-dim)', fontSize: '12px', textTransform: 'lowercase' }}>
                             powered by youmind repo

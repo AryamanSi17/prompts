@@ -9,16 +9,11 @@ import TextPrompts from './pages/TextPrompts';
 import PromptBuilder from './pages/PromptBuilder';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import Privacy from './pages/Privacy';
+import Contact from './pages/Contact';
 import { ToastProvider } from './context/ToastContext';
 
-const PagePlaceholder = ({ title }) => (
-    <div className="container" style={{ padding: '100px 0', minHeight: '60vh' }}>
-        <h1 className="ndot" style={{ fontSize: '48px', marginBottom: '24px' }}>{title.toUpperCase()}.</h1>
-        <p style={{ color: 'var(--text-dim)', lineHeight: '1.6' }}>
-            This is a draft of the {title} page for the nano prompts. app. Modular design allows for quick expansion of content here.
-        </p>
-    </div>
-);
+
 
 function App() {
     const [user, setUser] = useState(null);
@@ -48,8 +43,8 @@ function App() {
                             <Route path="/library" element={<Library />} />
                             <Route path="/text-prompts" element={<TextPrompts />} />
                             <Route path="/builder" element={<PromptBuilder />} />
-                            <Route path="/privacy" element={<PagePlaceholder title="privacy" />} />
-                            <Route path="/contact" element={<PagePlaceholder title="contact" />} />
+                            <Route path="/privacy" element={<Privacy />} />
+                            <Route path="/contact" element={<Contact />} />
                         </Routes>
                     </div>
                     <Footer />

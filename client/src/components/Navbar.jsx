@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Settings, LogOut, Grid, Home, Book, AlignLeft, Menu, X, Wand2, Play } from 'lucide-react';
+import { Settings, LogOut, Grid, Home, Book, AlignLeft, Menu, X, Wand2 } from 'lucide-react';
 
 function Navbar({ user, setUser }) {
     const navigate = useNavigate();
@@ -33,11 +33,6 @@ function Navbar({ user, setUser }) {
             <Link to="/builder" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <Wand2 size={18} />
                 <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>drafter</span>
-            </Link>
-
-            <Link to="/video-guides" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <Play size={18} />
-                <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>video guides</span>
             </Link>
 
             {user ? (

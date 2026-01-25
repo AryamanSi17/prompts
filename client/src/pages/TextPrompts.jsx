@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Search, Copy, Check, Loader2 } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 function TextPrompts() {
     const [prompts, setPrompts] = useState([]);
@@ -8,6 +9,7 @@ function TextPrompts() {
     const [hasMore, setHasMore] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [copiedId, setCopiedId] = useState(null);
+    const { addToast } = useToast();
     const apiBase = 'https://prompts-server-drab.vercel.app';
 
     useEffect(() => {
@@ -52,8 +54,8 @@ function TextPrompts() {
     const handleCopy = (id, text) => {
         navigator.clipboard.writeText(text);
         setCopiedId(id);
+        addToast('engine prompt copied to clipboard', 'success');
         setTimeout(() => setCopiedId(null), 2000);
-
     };
 
     return (

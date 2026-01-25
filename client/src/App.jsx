@@ -9,6 +9,7 @@ import TextPrompts from './pages/TextPrompts';
 import PromptBuilder from './pages/PromptBuilder';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import { ToastProvider } from './context/ToastContext';
 
 const PagePlaceholder = ({ title }) => (
     <div className="container" style={{ padding: '100px 0', minHeight: '60vh' }}>
@@ -34,25 +35,27 @@ function App() {
     if (loading) return null;
 
     return (
-        <Router>
-            <div className="app-shell" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
-                <Navbar user={user} setUser={setUser} />
-                <div style={{ flex: 1 }}>
-                    <Routes>
-                        <Route path="/" element={<Landing />} />
-                        <Route path="/auth" element={!user ? <Auth setUser={setUser} /> : <Navigate to="/dashboard" />} />
-                        <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/auth" />} />
-                        <Route path="/settings" element={user ? <Settings /> : <Navigate to="/auth" />} />
-                        <Route path="/library" element={<Library />} />
-                        <Route path="/text-prompts" element={<TextPrompts />} />
-                        <Route path="/builder" element={<PromptBuilder />} />
-                        <Route path="/privacy" element={<PagePlaceholder title="privacy" />} />
-                        <Route path="/contact" element={<PagePlaceholder title="contact" />} />
-                    </Routes>
+        <ToastProvider>
+            <Router>
+                <div className="app-shell" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+                    <Navbar user={user} setUser={setUser} />
+                    <div style={{ flex: 1 }}>
+                        <Routes>
+                            <Route path="/" element={<Landing />} />
+                            <Route path="/auth" element={!user ? <Auth setUser={setUser} /> : <Navigate to="/dashboard" />} />
+                            <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/auth" />} />
+                            <Route path="/settings" element={user ? <Settings /> : <Navigate to="/auth" />} />
+                            <Route path="/library" element={<Library />} />
+                            <Route path="/text-prompts" element={<TextPrompts />} />
+                            <Route path="/builder" element={<PromptBuilder />} />
+                            <Route path="/privacy" element={<PagePlaceholder title="privacy" />} />
+                            <Route path="/contact" element={<PagePlaceholder title="contact" />} />
+                        </Routes>
+                    </div>
+                    <Footer />
                 </div>
-                <Footer />
-            </div>
-        </Router>
+            </Router>
+        </ToastProvider>
     );
 }
 

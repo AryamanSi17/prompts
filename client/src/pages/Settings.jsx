@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Key, Save, AlertCircle } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 function Settings() {
     const [apiKey, setApiKey] = useState('');
     const [saved, setSaved] = useState(false);
+    const { addToast } = useToast();
 
     useEffect(() => {
         document.title = 'config | nano prompts.';
@@ -16,6 +18,7 @@ function Settings() {
         user.apiKey = apiKey;
         localStorage.setItem('user', JSON.stringify(user));
         setSaved(true);
+        addToast('api configuration saved successfully', 'success');
         setTimeout(() => setSaved(false), 3000);
     };
 
@@ -88,7 +91,7 @@ function Settings() {
                                 delete user.apiKey;
                                 localStorage.setItem('user', JSON.stringify(user));
                                 setApiKey('');
-                                alert('api key deleted from browser storage. this will not delete your actual google api key.');
+                                addToast('api key deleted from browser storage', 'info');
                             }}
                             style={{
                                 flex: 1,

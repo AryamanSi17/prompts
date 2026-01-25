@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useToast } from '../context/ToastContext';
 
 function Auth({ setUser }) {
-    React.useEffect(() => {
+    const { addToast } = useToast();
+    useEffect(() => {
         document.title = 'auth | nano prompts.';
     }, []);
     const [isLogin, setIsLogin] = useState(true);
@@ -23,8 +25,9 @@ function Auth({ setUser }) {
             localStorage.setItem('token', data.token);
             localStorage.setItem('user', JSON.stringify(data.user));
             setUser(data.user);
+            addToast(isLogin ? 'welcome back!' : 'account created successfully!', 'success');
         } catch (err) {
-            alert(err.message);
+            addToast(err.message, 'error');
         }
     };
 

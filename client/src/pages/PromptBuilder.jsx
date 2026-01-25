@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Copy, Check, Wand2, MessageSquare, User, Zap, Brain, ArrowRight, RotateCcw, Target, Music, ShieldAlert, ChevronRight } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 
 const TECHNIQUES = [
     {
@@ -48,6 +49,7 @@ function PromptBuilder() {
     const [negative, setNegative] = useState('');
     const [context, setContext] = useState('');
     const [copied, setCopied] = useState(false);
+    const { addToast } = useToast();
 
     useEffect(() => {
         document.title = 'drafter | nano prompts.';
@@ -78,6 +80,7 @@ function PromptBuilder() {
     const handleCopy = () => {
         navigator.clipboard.writeText(finalPrompt);
         setCopied(true);
+        addToast('professional engine copied to clipboard', 'success');
         setTimeout(() => setCopied(false), 2000);
     };
 

@@ -1,14 +1,15 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Search, Sparkles, Book, CheckCircle, X } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 import { libraryPrompts } from '../data/libraryData';
 
 function Library() {
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [visibleCount, setVisibleCount] = useState(12);
-    const [toast, setToast] = useState(null);
     const [copiedId, setCopiedId] = useState(null);
     const [selectedPrompt, setSelectedPrompt] = useState(null);
+    const { addToast } = useToast();
 
     useEffect(() => {
         document.title = 'library | nano prompts.';
@@ -31,15 +32,10 @@ function Library() {
         });
     }, [searchQuery, selectedCategory]);
 
-    const showToast = (message) => {
-        setToast(message);
-        setTimeout(() => setToast(null), 3000);
-    };
-
     const handleCopy = (id, text) => {
         navigator.clipboard.writeText(text);
         setCopiedId(id);
-        showToast('engine prompt copied to clipboard');
+        addToast('engine prompt copied to clipboard', 'success');
         setTimeout(() => setCopiedId(null), 2000);
     };
 
@@ -49,26 +45,6 @@ function Library() {
 
     return (
         <main className="container fade-in" style={{ padding: '80px 0' }}>
-            {/* Toast Notification */}
-            {toast && (
-                <div className="glass" style={{
-                    position: 'fixed',
-                    bottom: '40px',
-                    left: '50%',
-                    transform: 'translateX(-50%)',
-                    zIndex: 1000,
-                    padding: '12px 24px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    border: '1px solid var(--accent)',
-                    background: 'rgba(0,0,0,0.8)',
-                    animation: 'slideUp 0.3s ease-out'
-                }}>
-                    <CheckCircle size={18} style={{ color: 'var(--accent)' }} />
-                    <span style={{ fontSize: '14px', textTransform: 'lowercase' }}>{toast}</span>
-                </div>
-            )}
 
             <div style={{ textAlign: 'center', marginBottom: '80px' }}>
                 <h1 className="ndot" style={{ fontSize: 'min(56px, 12vw)', marginBottom: '16px', textTransform: 'lowercase' }}>

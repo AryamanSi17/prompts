@@ -44,11 +44,6 @@ function Landing() {
                                 go to library <ArrowRight size={18} />
                             </button>
                         </Link>
-                        <Link to="/builder">
-                            <button className="glass" style={{ padding: '16px 40px', display: 'flex', alignItems: 'center', gap: '12px', textTransform: 'lowercase' }}>
-                                build your engine <Wand2 size={18} />
-                            </button>
-                        </Link>
                     </div>
                 </div>
             </section>

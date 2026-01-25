@@ -20,9 +20,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/prompts')
 
 const allowedOrigins = [
     'https://prompts-collect.vercel.app',
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'http://localhost:3000'
+    'https://nanoprompts.space'
 ];
 
 app.use(cors({

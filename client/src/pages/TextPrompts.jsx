@@ -1,0 +1,174 @@
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Search, Copy, Check, Loader2 } from 'lucide-react';
+
+function TextPrompts() {
+    const [prompts, setPrompts] = useState([]);
+    const [page, setPage] = useState(1);
+    const [loading, setLoading] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [copiedId, setCopiedId] = useState(null);
+    const observer = useRef();
+
+    const fetchPrompts = useCallback(async (pageNum, query = '') => {
+        setLoading(true);
+        try {
+            const response = await fetch(`http://localhost:5000/api/prompts?page=${pageNum}&limit=50&search=${query}&type=photo`);
+            const data = await response.json();
+
+            if (pageNum === 1) {
+                setPrompts(data);
+            } else {
+                setPrompts(prev => [...prev, ...data]);
+            }
+
+            setHasMore(data.length === 50);
+        } catch (error) {
+            console.error('Failed to fetch prompts:', error);
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setPage(1);
+            fetchPrompts(1, searchQuery);
+        }, 500);
+        return () => clearTimeout(timer);
+    }, [searchQuery, fetchPrompts]);
+
+    const lastPromptElementRef = useCallback(node => {
+        if (loading) return;
+        if (observer.current) observer.current.disconnect();
+        observer.current = new IntersectionObserver(entries => {
+            if (entries[0].isIntersecting && hasMore) {
+                setPage(prevPage => prevPage + 1);
+            }
+        });
+        if (node) observer.current.observe(node);
+    }, [loading, hasMore]);
+
+    useEffect(() => {
+        if (page > 1) {
+            fetchPrompts(page, searchQuery);
+        }
+    }, [page, searchQuery, fetchPrompts]);
+
+    const handleCopy = (id, text) => {
+        navigator.clipboard.writeText(text);
+        setCopiedId(id);
+        setTimeout(() => setCopiedId(null), 2000);
+    };
+
+    return (
+        <main className="container fade-in" style={{ padding: '80px 0' }}>
+            <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+                <h1 className="ndot" style={{ fontSize: '56px', marginBottom: '16px', textTransform: 'lowercase' }}>
+                    text <span style={{ color: 'var(--accent)' }}>engines</span>.
+                </h1>
+                <p style={{ color: 'var(--text-dim)', fontSize: '18px', maxWidth: '600px', margin: '0 auto 40px', textTransform: 'lowercase' }}>
+                    access the complete raw database of 10,000+ nano banana pro engines. paginated and optimized.
+                </p>
+
+                <div style={{ maxWidth: '700px', margin: '0 auto' }}>
+                    <div className="glass" style={{ display: 'flex', alignItems: 'center', padding: '0 20px' }}>
+                        <Search size={20} style={{ opacity: 0.5, marginRight: '12px' }} />
+                        <input
+                            type="text"
+                            placeholder="search 10,000+ prompts ..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            style={{
+                                background: 'transparent',
+                                border: 'none',
+                                padding: '20px 0',
+                                width: '100%',
+                                textTransform: 'lowercase'
+                            }}
+                        />
+                    </div>
+                </div>
+            </div>
+
+            <div style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr',
+                gap: '16px',
+                maxWidth: '900px',
+                margin: '0 auto'
+            }}>
+                {prompts.map((p, index) => (
+                    <div
+                        ref={index === prompts.length - 1 ? lastPromptElementRef : null}
+                        key={p._id}
+                        className="glass"
+                        style={{
+                            padding: '24px',
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                            gap: '24px',
+                            transition: 'all 0.2s ease',
+                            border: '1px solid rgba(255,255,255,0.05)'
+                        }}
+                    >
+                        <div style={{ flex: 1 }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                                <span style={{ fontSize: '10px', color: 'var(--accent)', fontWeight: 700, textTransform: 'lowercase', letterSpacing: '1px' }}>
+                                    {p.category || 'general'}
+                                </span>
+                                <h3 style={{ fontSize: '14px', fontWeight: 600, textTransform: 'lowercase', margin: 0 }}>{p.title}</h3>
+                            </div>
+                            <p style={{
+                                fontSize: '13px',
+                                color: 'var(--text-dim)',
+                                fontStyle: 'italic',
+                                margin: 0,
+                                lineHeight: '1.5',
+                                opacity: 0.8
+                            }}>
+                                "{p.content}"
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => handleCopy(p._id, p.content)}
+                            style={{
+                                padding: '10px',
+                                borderRadius: '4px',
+                                background: copiedId === p._id ? 'var(--accent)' : 'rgba(255,255,255,0.05)',
+                                color: copiedId === p._id ? '#000' : '#fff',
+                                border: '1px solid var(--border)',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s ease',
+                                flexShrink: 0
+                            }}
+                        >
+                            {copiedId === p._id ? <Check size={18} /> : <Copy size={18} />}
+                        </button>
+                    </div>
+                ))}
+            </div>
+
+            {loading && (
+                <div style={{ textAlign: 'center', marginTop: '40px' }}>
+                    <Loader2 size={32} className="spin" style={{ color: 'var(--accent)' }} />
+                </div>
+            )}
+
+            {!hasMore && prompts.length > 0 && (
+                <p style={{ textAlign: 'center', color: 'var(--text-dim)', marginTop: '40px', fontSize: '12px' }}>
+                    you've reached the end of the engine database.
+                </p>
+            )}
+
+            {prompts.length === 0 && !loading && (
+                <div style={{ textAlign: 'center', padding: '100px 0' }}>
+                    <p style={{ color: 'var(--text-dim)', textTransform: 'lowercase' }}>no engines found matching your search.</p>
+                </div>
+            )}
+        </main>
+    );
+}
+
+export default TextPrompts;

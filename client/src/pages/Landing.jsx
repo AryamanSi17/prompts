@@ -35,18 +35,13 @@ function Landing() {
                         the world's<br />best <span style={{ color: 'var(--accent)' }}>prompt presets</span>.
                     </h1>
                     <p style={{ fontSize: 'min(20px, 5vw)', color: 'var(--text-dim)', maxWidth: '750px', margin: '0 auto 40px', textTransform: 'lowercase' }}>
-                        unleash the full power of google gemini nano and banana pro with our professional prompt presets.
+                        unleash the full power of nano banana with our professional prompt presets.
                         the ultimate engine library for high-performance AI generation.
                     </p>
                     <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
                         <Link to="/library">
                             <button className="primary" style={{ padding: '16px 40px', display: 'flex', alignItems: 'center', gap: '12px', textTransform: 'lowercase' }}>
                                 explore presets <ArrowRight size={18} />
-                            </button>
-                        </Link>
-                        <Link to="/builder">
-                            <button className="glass" style={{ padding: '16px 40px', display: 'flex', alignItems: 'center', gap: '12px', textTransform: 'lowercase' }}>
-                                build your engine <Wand2 size={18} />
                             </button>
                         </Link>
                     </div>

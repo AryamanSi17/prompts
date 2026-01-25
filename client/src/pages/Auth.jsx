@@ -34,8 +34,10 @@ function Auth({ setUser }) {
             background: 'radial-gradient(circle at center, #111 0%, #000 100%)'
         }}>
             <div className="glass fade-in" style={{
-                padding: '40px',
-                width: '400px',
+                padding: '40px 20px',
+                width: '100%',
+                maxWidth: '400px',
+                margin: '0 20px',
                 textAlign: 'center'
             }}>
                 <h1 className="ndot" style={{ fontSize: '32px', marginBottom: '8px', textTransform: 'lowercase' }}>prompts.</h1>

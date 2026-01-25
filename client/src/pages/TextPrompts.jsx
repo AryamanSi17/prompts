@@ -51,16 +51,16 @@ function TextPrompts() {
     };
 
     return (
-        <main className="container fade-in" style={{ padding: '80px 0' }}>
-            <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-                <h1 className="ndot" style={{ fontSize: '56px', marginBottom: '16px', textTransform: 'lowercase' }}>
+        <main className="container fade-in" style={{ padding: '60px 0' }}>
+            <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+                <h1 className="ndot" style={{ fontSize: 'min(56px, 12vw)', marginBottom: '16px', textTransform: 'lowercase' }}>
                     text <span style={{ color: 'var(--accent)' }}>engines</span>.
                 </h1>
-                <p style={{ color: 'var(--text-dim)', fontSize: '18px', maxWidth: '600px', margin: '0 auto 40px', textTransform: 'lowercase' }}>
+                <p style={{ color: 'var(--text-dim)', fontSize: 'min(18px, 4.5vw)', maxWidth: '600px', margin: '0 auto 40px', textTransform: 'lowercase', padding: '0 20px' }}>
                     access the complete raw database of 10,000+ nano banana pro engines. paginated and optimized.
                 </p>
 
-                <div style={{ maxWidth: '700px', margin: '0 auto' }}>
+                <div style={{ maxWidth: '700px', margin: '0 auto', padding: '0 20px' }}>
                     <div className="glass" style={{ display: 'flex', alignItems: 'center', padding: '0 20px' }}>
                         <Search size={20} style={{ opacity: 0.5, marginRight: '12px' }} />
                         <input
@@ -80,17 +80,18 @@ function TextPrompts() {
                 </div>
             </div>
 
-            <div style={{
+            <div className="prompts-grid" style={{
                 display: 'grid',
                 gridTemplateColumns: '1fr',
                 gap: '16px',
                 maxWidth: '900px',
-                margin: '0 auto'
+                margin: '0 auto',
+                padding: '0 20px'
             }}>
                 {prompts.map((p) => (
                     <div
                         key={p._id}
-                        className="glass"
+                        className="glass prompt-card"
                         style={{
                             padding: '24px',
                             display: 'flex',
@@ -102,7 +103,7 @@ function TextPrompts() {
                         }}
                     >
                         <div style={{ flex: 1 }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', flexWrap: 'wrap' }}>
                                 <span style={{ fontSize: '10px', color: 'var(--accent)', fontWeight: 700, textTransform: 'lowercase', letterSpacing: '1px' }}>
                                     {p.category || 'general'}
                                 </span>
@@ -114,7 +115,8 @@ function TextPrompts() {
                                 fontStyle: 'italic',
                                 margin: 0,
                                 lineHeight: '1.5',
-                                opacity: 0.8
+                                opacity: 0.8,
+                                wordBreak: 'break-word'
                             }}>
                                 "{p.content}"
                             </p>
@@ -137,6 +139,19 @@ function TextPrompts() {
                     </div>
                 ))}
             </div>
+
+            <style>{`
+                @media (max-width: 600px) {
+                    .prompt-card {
+                        flex-direction: column !important;
+                        align-items: flex-start !important;
+                        gap: 16px !important;
+                    }
+                    .prompt-card button {
+                        align-self: flex-end;
+                    }
+                }
+            `}</style>
 
             {loading && (
                 <div style={{ textAlign: 'center', marginTop: '40px' }}>

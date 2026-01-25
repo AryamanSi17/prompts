@@ -28,12 +28,12 @@ function Landing() {
                 ></div>
             </div>
 
-            <section style={{ height: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center' }}>
+            <section style={{ height: 'auto', minHeight: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '100px 20px' }}>
                 <div className="container fade-in">
-                    <h1 className="ndot" style={{ fontSize: '80px', lineHeight: '1.1', marginBottom: '24px', textTransform: 'lowercase' }}>
+                    <h1 className="ndot" style={{ fontSize: 'min(80px, 12vw)', lineHeight: '1.1', marginBottom: '24px', textTransform: 'lowercase' }}>
                         a library<br />of prompts<span style={{ color: 'var(--accent)' }}>.</span>
                     </h1>
-                    <p style={{ fontSize: '20px', color: 'var(--text-dim)', maxWidth: '700px', margin: '0 auto 40px', textTransform: 'lowercase' }}>
+                    <p style={{ fontSize: 'min(20px, 5vw)', color: 'var(--text-dim)', maxWidth: '700px', margin: '0 auto 40px', textTransform: 'lowercase' }}>
                         it's tough to find prompt collections and create apps, so we curated for you.
                         scale your creativity with our modular prompt engine.
                     </p>
@@ -47,10 +47,14 @@ function Landing() {
                 </div>
             </section>
 
-            <section style={{ padding: '100px 0' }}>
+            <section style={{ padding: '80px 0' }}>
                 <div className="container">
                     <h2 className="ndot" style={{ fontSize: '40px', marginBottom: '60px', textAlign: 'center', textTransform: 'lowercase' }}>features.</h2>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '30px' }}>
+                    <div className="features-grid" style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+                        gap: '30px'
+                    }}>
                         <div className="glass" style={{ padding: '40px' }}>
                             <Key size={32} style={{ marginBottom: '20px' }} />
                             <h3 style={{ marginBottom: '16px', textTransform: 'lowercase' }}>byoak(coming in playground)</h3>
@@ -76,11 +80,15 @@ function Landing() {
                 </div>
             </section>
 
-            <section style={{ padding: '100px 0', background: 'rgba(255,255,255,0.02)' }}>
+            <section style={{ padding: '80px 0', background: 'rgba(255,255,255,0.02)' }}>
                 <div className="container">
                     <h2 className="ndot" style={{ fontSize: '40px', marginBottom: '20px', textAlign: 'center', textTransform: 'lowercase' }}>showcase.</h2>
                     <p style={{ color: 'var(--text-dim)', textAlign: 'center', marginBottom: '60px', textTransform: 'lowercase' }}></p>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px' }}>
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+                        gap: '20px'
+                    }}>
                         {examplePrompts.slice(0, 3).map((ex) => (
                             <div key={ex.id} className="glass" style={{ overflow: 'hidden' }}>
                                 <img src={ex.image} alt={ex.title} style={{ width: '100%', height: '300px', objectFit: 'cover' }} />

@@ -83,7 +83,30 @@ textarea {
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 40px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 20px;
+    }
+
+    h1 {
+        font-size: 40px !important;
+    }
+
+    h2 {
+        font-size: 28px !important;
+    }
+
+    .mobile-hide {
+        display: none !important;
+    }
+
+    .mobile-stack {
+        flex-direction: column !important;
+        gap: 16px !important;
+    }
 }
 
 @keyframes fadeIn {

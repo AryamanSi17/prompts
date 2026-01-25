@@ -24,7 +24,7 @@ function Settings() {
                 <h1 className="ndot" style={{ fontSize: '40px', marginBottom: '8px', textTransform: 'lowercase' }}>settings.</h1>
                 <p style={{ color: 'var(--text-dim)', marginBottom: '40px', textTransform: 'lowercase' }}>configure your ai integration preferences.</p>
 
-                <div className="glass" style={{ padding: '40px', marginBottom: '32px' }}>
+                <div className="glass" style={{ padding: 'min(40px, 8vw)', marginBottom: '32px' }}>
                     <h2 style={{ fontSize: '18px', marginBottom: '24px', fontWeight: 600, textTransform: 'lowercase' }}>how to get your api key</h2>
                     <ul style={{ color: 'var(--text-dim)', fontSize: '14px', lineHeight: '1.6', paddingLeft: '20px', textTransform: 'lowercase' }}>
                         <li>1. visit the <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', textDecoration: 'underline' }}>google ai studio</a>.</li>
@@ -34,7 +34,7 @@ function Settings() {
                     </ul>
                 </div>
 
-                <div className="glass" style={{ padding: '40px' }}>
+                <div className="glass" style={{ padding: 'min(40px, 8vw)' }}>
                     <div style={{ marginBottom: '32px' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
                             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 600, textTransform: 'lowercase' }}>
@@ -64,7 +64,7 @@ function Settings() {
                         </p>
                     </div>
 
-                    <div style={{ display: 'flex', gap: '12px' }}>
+                    <div className="mobile-stack" style={{ display: 'flex', gap: '12px' }}>
                         <button
                             onClick={handleSave}
                             style={{

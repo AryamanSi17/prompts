@@ -7,7 +7,8 @@ function Dashboard() {
         <main className="container fade-in" style={{ padding: '100px 0', minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div className="glass" style={{
                 maxWidth: '800px',
-                padding: '80px 40px',
+                width: '100%',
+                padding: 'min(80px, 12vw) min(40px, 8vw)',
                 textAlign: 'center',
                 position: 'relative',
                 overflow: 'hidden'
@@ -42,7 +43,7 @@ function Dashboard() {
                         }}>under progress</p>
                     </div>
 
-                    <h1 className="ndot" style={{ fontSize: '72px', marginBottom: '24px', lineHeight: 1 }}>
+                    <h1 className="ndot" style={{ fontSize: 'min(72px, 14vw)', marginBottom: '24px', lineHeight: 1 }}>
                         the <span style={{ color: 'var(--accent)' }}>playground</span>.
                     </h1>
 
@@ -60,7 +61,7 @@ function Dashboard() {
 
                 <div style={{
                     display: 'grid',
-                    gridTemplateColumns: 'repeat(3, 1fr)',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
                     gap: '24px',
                     marginBottom: '64px',
                     textAlign: 'left'

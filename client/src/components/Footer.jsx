@@ -11,7 +11,11 @@ function Footer() {
             backdropFilter: 'blur(10px)'
         }}>
             <div className="container">
-                <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '40px' }}>
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                    gap: '40px'
+                }}>
                     <div>
                         <h2 className="ndot" style={{ fontSize: '24px', marginBottom: '16px' }}>prompts.</h2>
                         <p style={{ color: 'var(--text-dim)', fontSize: '14px', lineHeight: '1.6', maxWidth: '300px' }}>

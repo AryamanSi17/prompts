@@ -2,16 +2,11 @@
     "rewrites": [
         {
             "source": "/api/:path*",
-            "destination": "https://prompts-server-drab.vercel.app/api/:path"
-        }
-    ],
-    "routes": [
-        {
-            "handle": "filesystem"
+            "destination": "https://prompts-server-drab.vercel.app/api/:path*"
         },
         {
-            "src": "/(.*)",
-            "dest": "/index.html"
+            "source": "/((?!api/).*)",
+            "destination": "/index.html"
         }
     ]
 }

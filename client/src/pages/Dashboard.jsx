@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { Sparkles, ArrowRight, Zap, Globe, Cpu } from 'lucide-react';
 
 function Dashboard() {
+    React.useEffect(() => {
+        document.title = 'playground | prompts.';
+    }, []);
     return (
         <main className="container fade-in" style={{ padding: '100px 0', minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <div className="glass" style={{

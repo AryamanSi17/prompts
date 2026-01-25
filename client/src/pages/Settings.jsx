@@ -6,6 +6,7 @@ function Settings() {
     const [saved, setSaved] = useState(false);
 
     useEffect(() => {
+        document.title = 'config | prompts.';
         const user = JSON.parse(localStorage.getItem('user'));
         if (user?.apiKey) setApiKey(user.apiKey);
     }, []);

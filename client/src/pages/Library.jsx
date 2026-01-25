@@ -11,6 +11,7 @@ function Library() {
     const [selectedPrompt, setSelectedPrompt] = useState(null);
 
     useEffect(() => {
+        document.title = 'library | prompts.';
         if (selectedPrompt) {
             document.body.style.overflow = 'hidden';
         } else {

@@ -8,6 +8,11 @@ function TextPrompts() {
     const [hasMore, setHasMore] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [copiedId, setCopiedId] = useState(null);
+    const apiBase = 'https://prompts-server-drab.vercel.app';
+
+    useEffect(() => {
+        document.title = 'text engines | prompts.';
+    }, []);
 
     const fetchPrompts = useCallback(async (pageNum, query = '') => {
         setLoading(true);
@@ -48,7 +53,7 @@ function TextPrompts() {
         navigator.clipboard.writeText(text);
         setCopiedId(id);
         setTimeout(() => setCopiedId(null), 2000);
-        
+
     };
 
     return (

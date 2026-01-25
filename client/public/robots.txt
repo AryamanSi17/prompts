@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://prompts-vanco.vercel.app/sitemap.xml

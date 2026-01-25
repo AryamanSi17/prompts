@@ -1,0 +1,16 @@
+{
+    "name": "prompts. | the engine library",
+    "short_name": "prompts.",
+    "description": "Curated engine prompts for Google Gemini Nano and Banana Pro.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#000000",
+    "theme_color": "#ff0000",
+    "icons": [
+        {
+            "src": "/favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ]
+}

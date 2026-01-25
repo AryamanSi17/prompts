@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 
 function Auth({ setUser }) {
+    React.useEffect(() => {
+        document.title = 'auth | prompts.';
+    }, []);
     const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');

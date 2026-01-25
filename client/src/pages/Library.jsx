@@ -243,7 +243,7 @@ function Library() {
                 >
                     <div
                         onClick={(e) => e.stopPropagation()}
-                        className="glass"
+                        className="glass modal-content"
                         style={{
                             maxWidth: '1000px',
                             width: '100%',
@@ -259,21 +259,24 @@ function Library() {
                             onClick={() => setSelectedPrompt(null)}
                             style={{
                                 position: 'absolute',
-                                top: '20px',
-                                right: '20px',
-                                background: 'rgba(0,0,0,0.5)',
+                                top: '16px',
+                                right: '16px',
+                                background: 'rgba(0,0,0,0.7)',
                                 color: '#fff',
-                                border: 'none',
-                                padding: '8px',
+                                border: '1px solid rgba(255,255,255,0.2)',
+                                padding: '10px',
                                 borderRadius: '50%',
-                                zIndex: 10,
-                                cursor: 'pointer'
+                                zIndex: 100,
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center'
                             }}
                         >
-                            <X size={20} />
+                            <X size={24} />
                         </button>
 
-                        <div style={{ flex: '1.2', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div className="modal-image-container" style={{ flex: '1.2', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px' }}>
                             <img
                                 src={selectedPrompt.image}
                                 alt={selectedPrompt.title}
@@ -281,7 +284,7 @@ function Library() {
                             />
                         </div>
 
-                        <div style={{ flex: '0.8', padding: '40px', overflowY: 'auto', background: 'rgba(255,255,255,0.02)' }}>
+                        <div className="modal-info-container" style={{ flex: '0.8', padding: '40px', overflowY: 'auto', background: 'rgba(255,255,255,0.02)' }}>
                             <div style={{ marginBottom: '32px' }}>
                                 <span style={{
                                     background: 'var(--accent)',
@@ -359,9 +362,22 @@ function Library() {
                 }
 
                 @media (max-width: 900px) {
-                    .glass { flex-direction: column !important; }
-                    div[style*="flex: 1.2"] { height: 400px; flex: none !important; }
-                    div[style*="flex: 0.8"] { flex: none !important; }
+                    .modal-content { 
+                        flex-direction: column !important; 
+                        max-height: 95vh !important;
+                        width: 95% !important;
+                    }
+                    .modal-image-container { 
+                        height: 300px !important; 
+                        flex: none !important; 
+                    }
+                    .modal-info-container { 
+                        flex: 1 !important; 
+                        padding: 24px !important;
+                    }
+                    .modal-content h2 {
+                        font-size: 24px !important;
+                    }
                 }
             `}</style>
         </main>

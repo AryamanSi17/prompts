@@ -28,15 +28,31 @@ router.get('/', async (req, res) => {
         const query = {};
         if (type) query.type = type;
         if (category) query.category = category;
+
         if (search) {
-            query.$or = [
-                { title: { $regex: search, $options: 'i' } },
-                { description: { $regex: search, $options: 'i' } },
-                { content: { $regex: search, $options: 'i' } }
-            ];
+            if (search.length > 2) {
+                // Use high-performance text search for longer queries
+                query.$text = { $search: search };
+            } else {
+                // Basic regex fallback for very short strings
+                query.title = { $regex: search, $options: 'i' };
+            }
         }
+
         const skip = (parseInt(page) - 1) * parseInt(limit);
-        const prompts = await Prompt.find(query)
+
+        let mongoQuery = Prompt.find(query);
+
+        // If searching, sort by text relevance score
+        if (query.$text) {
+            mongoQuery = mongoQuery
+                .select({ score: { $meta: 'textScore' } })
+                .sort({ score: { $meta: 'textScore' } });
+        } else {
+            mongoQuery = mongoQuery.sort({ _id: -1 }); // Default to newest
+        }
+
+        const prompts = await mongoQuery
             .select('title category content description')
             .limit(parseInt(limit))
             .skip(skip)

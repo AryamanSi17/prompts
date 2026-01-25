@@ -11,14 +11,39 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/prompts')
-    .then(() => console.log('Connected to MongoDB'))
+    .then(() => {
+        console.log('Connected to MongoDB');
+        // Ensure indexes are created/synced for high-performance searching
+        mongoose.model('Prompt').syncIndexes();
+    })
     .catch(err => console.error(err));
 
+const allowedOrigins = [
+    'https://prompts-collect.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:3000'
+];
+
 app.use(cors({
-    origin: '*',
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }));
 app.use(express.json());
+
+// Add caching for responses to reduce server load
+app.use((req, res, next) => {
+    if (req.method === 'GET') {
+        res.set('Cache-Control', 'public, max-age=300'); // Cache for 5 mins
+    }
+    next();
+});
 
 app.use('/api/auth', authRoutes);
 app.use('/api/prompts', promptRoutes);

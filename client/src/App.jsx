@@ -11,6 +11,7 @@ import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Privacy from './pages/Privacy';
 import Contact from './pages/Contact';
+import VideoGuides from './pages/VideoGuides';
 import { ToastProvider } from './context/ToastContext';
 
 
@@ -43,6 +44,7 @@ function App() {
                             <Route path="/library" element={<Library />} />
                             <Route path="/text-prompts" element={<TextPrompts />} />
                             <Route path="/builder" element={<PromptBuilder />} />
+                            <Route path="/video-guides" element={<VideoGuides />} />
                             <Route path="/privacy" element={<Privacy />} />
                             <Route path="/contact" element={<Contact />} />
                         </Routes>

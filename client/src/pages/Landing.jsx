@@ -72,9 +72,9 @@ function Landing() {
                         </div>
                         <div className="glass" style={{ padding: '40px' }}>
                             <Zap size={32} style={{ marginBottom: '20px' }} />
-                            <h3 style={{ marginBottom: '16px', textTransform: 'lowercase' }}>pro generation</h3>
+                            <h3 style={{ marginBottom: '16px', textTransform: 'lowercase' }}>video guides</h3>
                             <p style={{ color: 'var(--text-dim)', fontSize: '14px', lineHeight: '1.6', textTransform: 'lowercase' }}>
-                                the most diverse prompt collection for generating high-definition assets and cinematic visual prompts.
+                                expert-level storyboard guides for cinematic video generation with Veo 3.1 and Kling architectures.
                             </p>
                         </div>
                     </div>

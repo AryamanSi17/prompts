@@ -28,6 +28,7 @@ function Footer() {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                             <Link to="/" className="footer-link" style={{ textTransform: 'lowercase' }}>landing</Link>
                             <Link to="/builder" className="footer-link" style={{ textTransform: 'lowercase' }}>drafter</Link>
+                            <Link to="/video-guides" className="footer-link" style={{ textTransform: 'lowercase' }}>video guides</Link>
                             <Link to="/dashboard" className="footer-link" style={{ textTransform: 'lowercase' }}>dashboard</Link>
                             <Link to="/settings" className="footer-link" style={{ textTransform: 'lowercase' }}>api config</Link>
                         </div>

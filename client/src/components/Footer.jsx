@@ -19,7 +19,7 @@ function Footer() {
                     <div>
                         <h2 className="ndot" style={{ fontSize: '24px', marginBottom: '16px' }}>nano prompts.</h2>
                         <p style={{ color: 'var(--text-dim)', fontSize: '14px', lineHeight: '1.6', maxWidth: '300px' }}>
-                            Curating the finest prompt collections for creators. Scalable, modular
+                            Curating the finest prompt collections for creators.
 
                         </p>
                     </div>
@@ -27,6 +27,7 @@ function Footer() {
                         <h4 style={{ fontSize: '12px', textTransform: 'lowercase', letterSpacing: '2px', marginBottom: '20px' }}>product</h4>
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                             <Link to="/" className="footer-link" style={{ textTransform: 'lowercase' }}>landing</Link>
+                            <Link to="/builder" className="footer-link" style={{ textTransform: 'lowercase' }}>drafter</Link>
                             <Link to="/dashboard" className="footer-link" style={{ textTransform: 'lowercase' }}>dashboard</Link>
                             <Link to="/settings" className="footer-link" style={{ textTransform: 'lowercase' }}>api config</Link>
                         </div>

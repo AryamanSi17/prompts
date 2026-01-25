@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Settings, LogOut, Grid, Home, Book, AlignLeft, Menu, X } from 'lucide-react';
+import { Settings, LogOut, Grid, Home, Book, AlignLeft, Menu, X, Wand2 } from 'lucide-react';
 
 function Navbar({ user, setUser }) {
     const navigate = useNavigate();
@@ -28,6 +28,11 @@ function Navbar({ user, setUser }) {
             <Link to="/text-prompts" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <AlignLeft size={18} />
                 <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>text prompts</span>
+            </Link>
+
+            <Link to="/builder" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <Wand2 size={18} />
+                <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>drafter</span>
             </Link>
 
             {user ? (

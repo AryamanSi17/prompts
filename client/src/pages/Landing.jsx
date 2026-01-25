@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Sparkles, Key, Zap, Grid, Layers, ArrowRight } from 'lucide-react';
+import { Sparkles, Key, Zap, Grid, Layers, ArrowRight, Wand2 } from 'lucide-react';
 import { examplePrompts } from '../data/examples';
 
 function Landing() {
@@ -32,16 +32,21 @@ function Landing() {
             <section style={{ height: 'auto', minHeight: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '100px 20px' }}>
                 <div className="container fade-in">
                     <h1 className="ndot" style={{ fontSize: 'min(80px, 12vw)', lineHeight: '1.1', marginBottom: '24px', textTransform: 'lowercase' }}>
-                        a library<br />of prompts<span style={{ color: 'var(--accent)' }}>.</span>
+                        a library<br />of nano prompts<span style={{ color: 'var(--accent)' }}>.</span>
                     </h1>
                     <p style={{ fontSize: 'min(20px, 5vw)', color: 'var(--text-dim)', maxWidth: '700px', margin: '0 auto 40px', textTransform: 'lowercase' }}>
                         it's tough to find prompt collections and create apps, so we curated for you.
                         scale your creativity with our modular prompt engine.
                     </p>
-                    <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
+                    <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
                         <Link to="/library">
                             <button className="primary" style={{ padding: '16px 40px', display: 'flex', alignItems: 'center', gap: '12px', textTransform: 'lowercase' }}>
                                 go to library <ArrowRight size={18} />
+                            </button>
+                        </Link>
+                        <Link to="/builder">
+                            <button className="glass" style={{ padding: '16px 40px', display: 'flex', alignItems: 'center', gap: '12px', textTransform: 'lowercase' }}>
+                                build your engine <Wand2 size={18} />
                             </button>
                         </Link>
                     </div>
@@ -72,9 +77,9 @@ function Landing() {
                         </div>
                         <div className="glass" style={{ padding: '40px' }}>
                             <Zap size={32} style={{ marginBottom: '20px' }} />
-                            <h3 style={{ marginBottom: '16px', textTransform: 'lowercase' }}>photo & video</h3>
+                            <h3 style={{ marginBottom: '16px', textTransform: 'lowercase' }}>photo engines</h3>
                             <p style={{ color: 'var(--text-dim)', fontSize: '14px', lineHeight: '1.6', textTransform: 'lowercase' }}>
-                                diverse options to generate both stunning high-res photos and cinematic video sequences in seconds.
+                                diverse options to generate stunning high-res photos and visual assets in seconds with specialized prompts.
                             </p>
                         </div>
                     </div>

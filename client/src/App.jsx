@@ -6,6 +6,7 @@ import Settings from './pages/Settings';
 import Landing from './pages/Landing';
 import Library from './pages/Library';
 import TextPrompts from './pages/TextPrompts';
+import PromptBuilder from './pages/PromptBuilder';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 
@@ -44,6 +45,7 @@ function App() {
                         <Route path="/settings" element={user ? <Settings /> : <Navigate to="/auth" />} />
                         <Route path="/library" element={<Library />} />
                         <Route path="/text-prompts" element={<TextPrompts />} />
+                        <Route path="/builder" element={<PromptBuilder />} />
                         <Route path="/privacy" element={<PagePlaceholder title="privacy" />} />
                         <Route path="/contact" element={<PagePlaceholder title="contact" />} />
                     </Routes>

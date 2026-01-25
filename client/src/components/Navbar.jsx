@@ -74,7 +74,7 @@ function Navbar({ user, setUser }) {
             <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 0 }}>
                 <Link to="/" style={{ textDecoration: 'none', color: '#fff' }}>
                     <h2 className="ndot" style={{ fontSize: '24px', margin: 0 }}>
-                        prompts<span style={{ color: 'var(--accent)' }}>.</span>
+                        nano prompts<span style={{ color: 'var(--accent)' }}>.</span>
                     </h2>
                 </Link>
 

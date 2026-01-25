@@ -13,7 +13,7 @@ const PagePlaceholder = ({ title }) => (
     <div className="container" style={{ padding: '100px 0', minHeight: '60vh' }}>
         <h1 className="ndot" style={{ fontSize: '48px', marginBottom: '24px' }}>{title.toUpperCase()}.</h1>
         <p style={{ color: 'var(--text-dim)', lineHeight: '1.6' }}>
-            This is a draft of the {title} page for the prompts. app. Modular design allows for quick expansion of content here.
+            This is a draft of the {title} page for the nano prompts. app. Modular design allows for quick expansion of content here.
         </p>
     </div>
 );

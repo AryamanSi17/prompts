@@ -7,7 +7,7 @@ function Landing() {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
-        document.title = 'prompts. | the engine library for nano banana pro';
+        document.title = 'nano prompts. | the engine library for nano banana pro';
         const handleMouseMove = (e) => {
             setMousePos({
                 x: (e.clientX / window.innerWidth - 0.5) * 20,

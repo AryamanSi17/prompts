@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 
 function Auth({ setUser }) {
     React.useEffect(() => {
-        document.title = 'auth | prompts.';
+        document.title = 'auth | nano prompts.';
     }, []);
     const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState('');
@@ -43,7 +43,7 @@ function Auth({ setUser }) {
                 margin: '0 20px',
                 textAlign: 'center'
             }}>
-                <h1 className="ndot" style={{ fontSize: '32px', marginBottom: '8px', textTransform: 'lowercase' }}>prompts.</h1>
+                <h1 className="ndot" style={{ fontSize: '32px', marginBottom: '8px', textTransform: 'lowercase' }}>nano prompts.</h1>
                 <p style={{ color: 'var(--text-dim)', marginBottom: '32px', fontSize: '14px', textTransform: 'lowercase' }}>
                     {isLogin ? 'sign in to your account' : 'create a new account'}
                 </p>

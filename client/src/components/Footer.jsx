@@ -17,7 +17,7 @@ function Footer() {
                     gap: '40px'
                 }}>
                     <div>
-                        <h2 className="ndot" style={{ fontSize: '24px', marginBottom: '16px' }}>prompts.</h2>
+                        <h2 className="ndot" style={{ fontSize: '24px', marginBottom: '16px' }}>nano prompts.</h2>
                         <p style={{ color: 'var(--text-dim)', fontSize: '14px', lineHeight: '1.6', maxWidth: '300px' }}>
                             Curating the finest prompt collections for creators. Scalable, modular
 
@@ -56,7 +56,7 @@ function Footer() {
                 </div>
                 <div style={{ marginTop: '60px', paddingTop: '20px', borderTop: '1px solid var(--border)', textAlign: 'center' }}>
                     <p style={{ color: 'var(--text-dim)', fontSize: '12px' }}>
-                        &copy; {new Date().getFullYear()} prompts. All rights reserved.
+                        &copy; {new Date().getFullYear()} nano prompts. All rights reserved.
                     </p>
                 </div>
             </div>

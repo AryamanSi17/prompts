@@ -4,7 +4,7 @@ import { Sparkles, ArrowRight, Zap, Globe, Cpu } from 'lucide-react';
 
 function Dashboard() {
     React.useEffect(() => {
-        document.title = 'playground | prompts.';
+        document.title = 'playground | nano prompts.';
     }, []);
     return (
         <main className="container fade-in" style={{ padding: '100px 0', minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

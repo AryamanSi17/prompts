@@ -1,6 +1,6 @@
 {
-    "name": "prompts. | the engine library",
-    "short_name": "prompts.",
+    "name": "nano prompts. | the engine library",
+    "short_name": "nano prompts.",
     "description": "Curated engine prompts for Google Gemini Nano and Banana Pro.",
     "start_url": "/",
     "display": "standalone",

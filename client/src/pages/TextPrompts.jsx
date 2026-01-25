@@ -11,7 +11,7 @@ function TextPrompts() {
     const apiBase = 'https://prompts-server-drab.vercel.app';
 
     useEffect(() => {
-        document.title = 'text engines | prompts.';
+        document.title = 'text engines | nano prompts.';
     }, []);
 
     const fetchPrompts = useCallback(async (pageNum, query = '') => {

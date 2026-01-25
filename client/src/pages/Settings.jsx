@@ -6,7 +6,7 @@ function Settings() {
     const [saved, setSaved] = useState(false);
 
     useEffect(() => {
-        document.title = 'config | prompts.';
+        document.title = 'config | nano prompts.';
         const user = JSON.parse(localStorage.getItem('user'));
         if (user?.apiKey) setApiKey(user.apiKey);
     }, []);

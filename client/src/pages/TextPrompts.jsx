@@ -8,12 +8,11 @@ function TextPrompts() {
     const [hasMore, setHasMore] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [copiedId, setCopiedId] = useState(null);
-    const observer = useRef();
 
     const fetchPrompts = useCallback(async (pageNum, query = '') => {
         setLoading(true);
         try {
-            const response = await fetch(`/api/prompts?page=${pageNum}&limit=50&search=${query}&type=photo`);
+            const response = await fetch(`${apiBase}/api/prompts?page=${pageNum}&limit=10&search=${query}&type=photo`);
             const data = await response.json();
 
             if (pageNum === 1) {
@@ -22,7 +21,7 @@ function TextPrompts() {
                 setPrompts(prev => [...prev, ...data]);
             }
 
-            setHasMore(data.length === 50);
+            setHasMore(data.length === 10);
         } catch (error) {
             console.error('Failed to fetch prompts:', error);
         } finally {
@@ -38,16 +37,6 @@ function TextPrompts() {
         return () => clearTimeout(timer);
     }, [searchQuery, fetchPrompts]);
 
-    const lastPromptElementRef = useCallback(node => {
-        if (loading) return;
-        if (observer.current) observer.current.disconnect();
-        observer.current = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && hasMore) {
-                setPage(prevPage => prevPage + 1);
-            }
-        });
-        if (node) observer.current.observe(node);
-    }, [loading, hasMore]);
 
     useEffect(() => {
         if (page > 1) {
@@ -98,9 +87,8 @@ function TextPrompts() {
                 maxWidth: '900px',
                 margin: '0 auto'
             }}>
-                {prompts.map((p, index) => (
+                {prompts.map((p) => (
                     <div
-                        ref={index === prompts.length - 1 ? lastPromptElementRef : null}
                         key={p._id}
                         className="glass"
                         style={{
@@ -153,6 +141,25 @@ function TextPrompts() {
             {loading && (
                 <div style={{ textAlign: 'center', marginTop: '40px' }}>
                     <Loader2 size={32} className="spin" style={{ color: 'var(--accent)' }} />
+                </div>
+            )}
+
+            {!loading && hasMore && (
+                <div style={{ textAlign: 'center', marginTop: '40px' }}>
+                    <button
+                        onClick={() => setPage(prev => prev + 1)}
+                        className="glass"
+                        style={{
+                            padding: '16px 40px',
+                            textTransform: 'lowercase',
+                            fontSize: '12px',
+                            letterSpacing: '2px',
+                            fontWeight: 700,
+                            background: 'rgba(255,255,255,0.05)'
+                        }}
+                    >
+                        load more prompts
+                    </button>
                 </div>
             )}
 

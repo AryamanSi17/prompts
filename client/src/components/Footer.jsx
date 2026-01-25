@@ -19,7 +19,8 @@ function Footer() {
                     <div>
                         <h2 className="ndot" style={{ fontSize: '24px', marginBottom: '16px' }}>prompts.</h2>
                         <p style={{ color: 'var(--text-dim)', fontSize: '14px', lineHeight: '1.6', maxWidth: '300px' }}>
-                            Curating the finest prompt collections for creators. Scalable, modular, and designed for NothingOS aesthetics.
+                            Curating the finest prompt collections for creators. Scalable, modular
+
                         </p>
                     </div>
                     <div>

@@ -14,7 +14,23 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/prompts')
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error(err));
 
-app.use(cors());
+const allowedOrigins = [
+    'https://prompts-collect.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:3000'
+];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true
+}));
 app.use(express.json());
 
 app.use('/api/auth', authRoutes);

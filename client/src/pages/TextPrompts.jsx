@@ -12,8 +12,9 @@ function TextPrompts() {
 
     const fetchPrompts = useCallback(async (pageNum, query = '') => {
         setLoading(true);
+        const apiBase = import.meta.env.VITE_API_BASE_URL || '';
         try {
-            const response = await fetch(`http://localhost:5000/api/prompts?page=${pageNum}&limit=50&search=${query}&type=photo`);
+            const response = await fetch(`${apiBase}/api/prompts?page=${pageNum}&limit=50&search=${query}&type=photo`);
             const data = await response.json();
 
             if (pageNum === 1) {

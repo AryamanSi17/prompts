@@ -8,8 +8,9 @@ function Auth({ setUser }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
+        const apiBase = import.meta.env.VITE_API_BASE_URL || '';
         try {
-            const res = await fetch(endpoint, {
+            const res = await fetch(`${apiBase}${endpoint}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })

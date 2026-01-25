@@ -23,3 +23,5 @@ app.use('/api/prompts', promptRoutes);
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
+
+module.exports = app;

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Settings, Home, Book, AlignLeft, User as UserIcon, Rss } from 'lucide-react';
+import { Settings, Book, AlignLeft, User as UserIcon, Rss } from 'lucide-react';
 import UserSearch from './UserSearch';
 import { API_BASE } from '../utils/api';
 
@@ -37,8 +37,8 @@ function Navbar({ user, setUser }) {
 
                     <Link to={`/profile/${user.username}`} onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">
                         <div style={{
-                            width: '28px',
-                            height: '28px',
+                            width: '24px',
+                            height: '24px',
                             borderRadius: '50%',
                             background: user.avatar ? 'none' : 'var(--surface-alt)',
                             display: 'flex',
@@ -65,13 +65,23 @@ function Navbar({ user, setUser }) {
                         <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>settings</span>
                     </Link>
 
-                    <button onClick={handleLogout} style={{ border: 'none', color: 'var(--text-dim)', fontSize: '10px', marginTop: '10px', opacity: 0.5 }}>logout</button>
+                    <button onClick={handleLogout} style={{ border: 'none', background: 'transparent', color: 'var(--text-dim)', fontSize: '10px', padding: '12px', opacity: 0.5, cursor: 'pointer' }}>logout</button>
                 </>
             ) : (
-                <Link to="/auth" onClick={() => setIsMenuOpen(false)} style={{ padding: '12px' }}>
-                    <button className="primary" style={{ padding: '8px', width: '40px', height: '40px', borderRadius: '50%', fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <UserIcon size={16} />
-                    </button>
+                <Link to="/auth" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">
+                    <div style={{
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '50%',
+                        background: 'var(--text)',
+                        color: 'var(--bg)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center'
+                    }}>
+                        <UserIcon size={14} />
+                    </div>
+                    <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>sign in</span>
                 </Link>
             )}
         </>
@@ -105,7 +115,6 @@ function Navbar({ user, setUser }) {
                 </div>
             </nav>
 
-            {/* Navigation Sidebar/Bottom Bar */}
             <div className="nav-container-fixed" style={{
                 position: 'fixed',
                 zIndex: 1001,
@@ -126,7 +135,7 @@ function Navbar({ user, setUser }) {
                     right: 24px;
                     top: 50%;
                     transform: translateY(-50%);
-                    padding: 12px 8px;
+                    padding: 8px;
                     border-radius: 50px;
                 }
                 .nav-links-wrapper {
@@ -145,9 +154,9 @@ function Navbar({ user, setUser }) {
                         top: auto;
                         transform: none;
                         border-radius: 24px 24px 0 0;
-                        padding: 12px 10px;
-                        padding-bottom: calc(12px + env(safe-area-inset-bottom));
-                        background: rgba(10, 10, 10, 0.9);
+                        padding: 10px;
+                        padding-bottom: calc(10px + env(safe-area-inset-bottom));
+                        background: rgba(10, 10, 10, 0.95);
                         border-left: none;
                         border-right: none;
                         border-bottom: none;
@@ -158,7 +167,7 @@ function Navbar({ user, setUser }) {
                         width: 100%;
                     }
                     .nav-item {
-                        padding: 8px !important;
+                        padding: 12px 8px !important;
                         flex: 1;
                     }
                     .nav-item span {
@@ -166,7 +175,6 @@ function Navbar({ user, setUser }) {
                     }
                 }
             `}</style>
-
         </>
     );
 }

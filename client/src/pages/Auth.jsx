@@ -176,10 +176,10 @@ function Auth({ setUser }) {
                 margin: '0 20px',
                 textAlign: 'center'
             }}>
-                <h1 className="ndot" style={{ fontSize: '32px', marginBottom: '8px', textTransform: 'lowercase' }}>nano prompts.</h1>
-                <p style={{ color: 'var(--text-dim)', marginBottom: '32px', fontSize: '14px', textTransform: 'lowercase' }}>
-                    {isLogin ? 'sign in to your account' : 'create a new account'}
-                </p>
+                <h1 className="ndot" style={{ fontSize: '32px', marginBottom: '32px', textTransform: 'lowercase' }}>
+                    {isLogin ? 'sign in' : 'register'}
+                </h1>
+
 
                 <form onSubmit={handleAuth} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     {!isLogin && (

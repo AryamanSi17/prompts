@@ -23,6 +23,8 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/prompts')
 const allowedOrigins = [
     'https://prompts-collect.vercel.app',
     'https://nanoprompts.space',
+    'https://www.nanoprompts.space',
+
     'http://localhost:3000',
     'http://localhost:5000',
     'http://localhost:5173'
@@ -30,31 +32,19 @@ const allowedOrigins = [
 
 app.use(cors({
     origin: (origin, callback) => {
-        // Allow requests with no origin (mobile apps, Postman, etc.)
-        if (!origin) {
-            return callback(null, true);
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            // Log the rejected origin for debugging
+            console.log('CORS rejected origin:', origin);
+            callback(new Error('Not allowed by CORS'));
         }
-
-        // Allow all localhost origins in development
-        if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
-            return callback(null, true);
-        }
-
-        // Check against allowed origins
-        if (allowedOrigins.includes(origin)) {
-            return callback(null, true);
-        }
-
-        // Production: reject unknown origins
-        if (process.env.NODE_ENV === 'production') {
-            return callback(new Error('Not allowed by CORS'));
-        }
-
-        // Development: allow all (remove this in production)
-        callback(null, true);
     },
-    credentials: true
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
 }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 

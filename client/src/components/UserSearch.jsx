@@ -49,9 +49,14 @@ function UserSearch() {
         }
     };
 
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        handleSearch();
+    };
+
     return (
         <div ref={searchRef} style={{ position: 'relative', flex: 1, maxWidth: 'min(400px, 60vw)' }}>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '8px' }}>
                 <div style={{ position: 'relative', flex: 1 }}>
                     <Search size={14} style={{
                         position: 'absolute',
@@ -66,7 +71,6 @@ function UserSearch() {
                         placeholder="search..."
                         value={query}
                         onChange={(e) => setQuery(e.target.value)}
-                        onKeyDown={handleKeyDown}
                         style={{
                             paddingLeft: '32px',
                             paddingRight: '32px',
@@ -98,8 +102,7 @@ function UserSearch() {
                     )}
                 </div>
                 <button
-                    onClick={handleSearch}
-                    className="mobile-hide"
+                    type="submit"
                     style={{
                         padding: '0 12px',
                         height: '34px',
@@ -108,12 +111,15 @@ function UserSearch() {
                         color: '#000',
                         fontWeight: '600',
                         border: 'none',
-                        borderRadius: '8px'
+                        borderRadius: '8px',
+                        flexShrink: 0
                     }}
                 >
-                    search
+                    <span className="mobile-hide">search</span>
+                    <Search size={14} className="mobile-show" style={{ display: 'none' }} />
                 </button>
-            </div>
+            </form>
+
 
             {showResults && (
                 <div className="glass shadow-lg" style={{

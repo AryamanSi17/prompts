@@ -218,8 +218,11 @@ router.get('/:userId/following', optionalAuth, async (req, res) => {
 router.get('/search', optionalAuth, async (req, res) => {
     try {
         const { q, limit = 10 } = req.query;
+        console.log('[DEBUG] Search Query Received:', q);
 
         if (!q || q.trim().length === 0) {
+            console.log('[DEBUG] Empty query, returning []');
+
 
 
             return res.json({ users: [] });

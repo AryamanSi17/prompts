@@ -21,7 +21,7 @@ router.post('/', authMiddleware, (req, res) => {
         }
 
         try {
-            const { caption } = req.body;
+            const { caption, prompt, guide } = req.body;
             const file = req.file;
             const isVideo = file.mimetype.startsWith('video/');
 
@@ -29,9 +29,12 @@ router.post('/', authMiddleware, (req, res) => {
                 userId: req.userId,
                 type: isVideo ? 'video' : 'photo',
                 caption: caption || '',
+                prompt: prompt || '',
+                guide: guide || '',
                 mediaUrl: `/uploads/posts/${file.filename}`,
                 originalSize: file.size
             };
+
 
             // Handle video compression
             if (isVideo) {

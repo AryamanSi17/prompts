@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Upload, Heart, MessageCircle, User as UserIcon } from 'lucide-react';
+import { Upload, Heart, MessageCircle, User as UserIcon, Terminal, BookOpen, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import API from '../utils/api';
 import { useToast } from '../context/ToastContext';
@@ -50,7 +50,7 @@ function Feed() {
     };
 
     return (
-        <main className="container" style={{ padding: '80px 20px', maxWidth: '700px' }}>
+        <main className="container" style={{ padding: '80px 20px', maxWidth: '700px', paddingBottom: '100px' }}>
             <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -138,23 +138,25 @@ function Feed() {
                                 </div>
                             </Link>
 
-                            {post.type === 'photo' ? (
-                                <Image
-                                    src={`http://localhost:5000${post.mediaUrl}`}
-                                    alt={post.caption}
-                                    style={{ width: '100%', height: 'auto', maxHeight: '600px' }}
-                                />
-                            ) : (
-                                <video
-                                    src={`http://localhost:5000${post.mediaUrl}`}
-                                    controls
-                                    style={{ width: '100%', maxHeight: '600px', background: '#000' }}
-                                    poster={post.thumbnail ? `http://localhost:5000${post.thumbnail}` : undefined}
-                                />
-                            )}
+                            <div className="media-wrapper" style={{ width: '100%', background: '#000' }}>
+                                {post.type === 'photo' ? (
+                                    <Image
+                                        src={`http://localhost:5000${post.mediaUrl}`}
+                                        alt={post.caption}
+                                        style={{ width: '100%', height: 'auto', maxHeight: '500px', objectFit: 'contain' }}
+                                    />
+                                ) : (
+                                    <video
+                                        src={`http://localhost:5000${post.mediaUrl}`}
+                                        controls
+                                        style={{ width: '100%', maxHeight: '500px', background: '#000' }}
+                                        poster={post.thumbnail ? `http://localhost:5000${post.thumbnail}` : undefined}
+                                    />
+                                )}
+                            </div>
 
                             <div style={{ padding: '16px' }}>
-                                <div style={{ display: 'flex', gap: '16px', marginBottom: '12px' }}>
+                                <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
                                     <button
                                         onClick={() => handleLike(post._id)}
                                         style={{
@@ -164,13 +166,13 @@ function Feed() {
                                             display: 'flex',
                                             alignItems: 'center',
                                             gap: '6px',
-                                            color: post.isLiked ? '#ff0000' : 'inherit',
+                                            color: post.isLiked ? 'var(--accent)' : 'inherit',
                                             cursor: 'pointer'
                                         }}
                                     >
                                         <Heart
                                             size={20}
-                                            fill={post.isLiked ? '#ff0000' : 'none'}
+                                            fill={post.isLiked ? 'var(--accent)' : 'none'}
                                         />
                                         <span style={{ fontSize: '14px' }}>{post.likesCount || 0}</span>
                                     </button>
@@ -191,7 +193,7 @@ function Feed() {
                                 </div>
 
                                 {post.caption && (
-                                    <p style={{ fontSize: '14px', lineHeight: '1.5' }}>
+                                    <p style={{ fontSize: '14px', lineHeight: '1.5', marginBottom: '12px' }}>
                                         <Link
                                             to={`/profile/${post.userId.username}`}
                                             style={{ fontWeight: '600', textDecoration: 'none', color: 'inherit' }}
@@ -200,6 +202,29 @@ function Feed() {
                                         </Link>{' '}
                                         {post.caption}
                                     </p>
+                                )}
+
+                                {(post.prompt || post.guide) && (
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px', borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
+                                        {post.prompt && (
+                                            <div style={{ background: 'rgba(255,255,255,0.03)', padding: '12px', borderRadius: '8px' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-dim)', fontSize: '11px', marginBottom: '6px', textTransform: 'lowercase' }}>
+                                                    <Terminal size={12} />
+                                                    prompt
+                                                </div>
+                                                <p style={{ fontSize: '13px', fontFamily: 'var(--font-mono)', lineHeight: '1.4' }}>{post.prompt}</p>
+                                            </div>
+                                        )}
+                                        {post.guide && (
+                                            <div style={{ background: 'rgba(255,255,255,0.03)', padding: '12px', borderRadius: '8px' }}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-dim)', fontSize: '11px', marginBottom: '6px', textTransform: 'lowercase' }}>
+                                                    <BookOpen size={12} />
+                                                    guide
+                                                </div>
+                                                <p style={{ fontSize: '13px', lineHeight: '1.5' }}>{post.guide}</p>
+                                            </div>
+                                        )}
+                                    </div>
                                 )}
                             </div>
                         </div>
@@ -223,6 +248,14 @@ function Feed() {
                 setPage(1);
                 loadFeed();
             }} />}
+
+            <style>{`
+                @media (max-width: 768px) {
+                    .media-wrapper img, .media-wrapper video {
+                        max-height: 48vh !important;
+                    }
+                }
+            `}</style>
         </main>
     );
 }
@@ -231,6 +264,8 @@ function UploadModal({ onClose, onSuccess }) {
     const [file, setFile] = useState(null);
     const [preview, setPreview] = useState('');
     const [caption, setCaption] = useState('');
+    const [prompt, setPrompt] = useState('');
+    const [guide, setGuide] = useState('');
     const [uploading, setUploading] = useState(false);
     const { addToast } = useToast();
 
@@ -257,10 +292,12 @@ function UploadModal({ onClose, onSuccess }) {
         const formData = new FormData();
         formData.append('media', file);
         formData.append('caption', caption);
+        formData.append('prompt', prompt);
+        formData.append('guide', guide);
 
         try {
             await API.posts.create(formData);
-            addToast('Post created successfully!', 'success');
+            addToast('Creation shared successfully!', 'success');
             onSuccess();
         } catch (err) {
             addToast(err.message || 'Upload failed', 'error');
@@ -291,7 +328,7 @@ function UploadModal({ onClose, onSuccess }) {
                 overflow: 'auto',
                 padding: '40px'
             }} onClick={(e) => e.stopPropagation()}>
-                <h2 className="ndot" style={{ fontSize: '24px', marginBottom: '24px' }}>create post</h2>
+                <h2 className="ndot" style={{ fontSize: '24px', marginBottom: '24px' }}>share creation</h2>
 
                 {!file ? (
                     <label style={{
@@ -304,7 +341,7 @@ function UploadModal({ onClose, onSuccess }) {
                     }}>
                         <Upload size={48} style={{ opacity: 0.3, marginBottom: '16px' }} />
                         <p style={{ color: 'var(--text-dim)', textTransform: 'lowercase' }}>
-                            click to upload photo or video
+                            upload AI video or result
                         </p>
                         <input
                             type="file"
@@ -315,18 +352,45 @@ function UploadModal({ onClose, onSuccess }) {
                     </label>
                 ) : (
                     <form onSubmit={handleUpload} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                        {file.type.startsWith('image/') ? (
-                            <img src={preview} alt="Preview" style={{ width: '100%', borderRadius: '12px' }} />
-                        ) : (
-                            <video src={preview} controls style={{ width: '100%', borderRadius: '12px' }} />
-                        )}
+                        <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', background: '#000' }}>
+                            {file.type.startsWith('image/') ? (
+                                <img src={preview} alt="Preview" style={{ width: '100%', maxHeight: '300px', objectFit: 'contain' }} />
+                            ) : (
+                                <video src={preview} controls style={{ width: '100%', maxHeight: '300px' }} />
+                            )}
+                        </div>
 
-                        <textarea
-                            placeholder="write a caption..."
-                            value={caption}
-                            onChange={(e) => setCaption(e.target.value)}
-                            style={{ minHeight: '80px', resize: 'vertical' }}
-                        />
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                            <div>
+                                <label style={{ display: 'block', fontSize: '11px', color: 'var(--text-dim)', marginBottom: '4px', textTransform: 'lowercase' }}>caption</label>
+                                <textarea
+                                    placeholder="what is this creation about?"
+                                    value={caption}
+                                    onChange={(e) => setCaption(e.target.value)}
+                                    style={{ minHeight: '60px', resize: 'vertical' }}
+                                />
+                            </div>
+
+                            <div>
+                                <label style={{ display: 'block', fontSize: '11px', color: 'var(--text-dim)', marginBottom: '4px', textTransform: 'lowercase' }}>AI prompt</label>
+                                <textarea
+                                    placeholder="paste the prompt used to generate this..."
+                                    value={prompt}
+                                    onChange={(e) => setPrompt(e.target.value)}
+                                    style={{ minHeight: '80px', resize: 'vertical', fontFamily: 'var(--font-mono)', fontSize: '13px' }}
+                                />
+                            </div>
+
+                            <div>
+                                <label style={{ display: 'block', fontSize: '11px', color: 'var(--text-dim)', marginBottom: '4px', textTransform: 'lowercase' }}>creation guide</label>
+                                <textarea
+                                    placeholder="how did you make this? (tools, settings, tips)"
+                                    value={guide}
+                                    onChange={(e) => setGuide(e.target.value)}
+                                    style={{ minHeight: '80px', resize: 'vertical' }}
+                                />
+                            </div>
+                        </div>
 
                         <div style={{ display: 'flex', gap: '12px' }}>
                             <button
@@ -345,7 +409,7 @@ function UploadModal({ onClose, onSuccess }) {
                                 className="primary"
                                 style={{ flex: 1 }}
                             >
-                                {uploading ? 'uploading...' : 'post'}
+                                {uploading ? 'uploading...' : 'share'}
                             </button>
                         </div>
                     </form>

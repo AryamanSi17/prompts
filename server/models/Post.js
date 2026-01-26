@@ -16,6 +16,17 @@ const PostSchema = new mongoose.Schema({
         default: '',
         maxlength: 2200
     },
+    prompt: {
+        type: String,
+        default: '',
+        maxlength: 5000
+    },
+    guide: {
+        type: String,
+        default: '',
+        maxlength: 5000
+    },
+
     mediaUrl: {
         type: String,
         required: true

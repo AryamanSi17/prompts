@@ -31,7 +31,17 @@ function Landing() {
                 ></div>
             </div>
 
-            <section style={{ height: 'auto', minHeight: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '100px 20px' }}>
+            <section style={{
+                height: 'auto',
+                minHeight: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                textAlign: 'center',
+                padding: '0 20px',
+                paddingTop: '60px' // Spacer for navbar
+            }}>
+
                 <div className="container fade-in">
                     <h1 className="ndot" style={{ fontSize: 'min(80px, 12vw)', lineHeight: '1.1', marginBottom: '24px', textTransform: 'lowercase' }}>
                         the world's<br />best <span style={{ color: 'var(--accent)' }}>prompt library</span>.

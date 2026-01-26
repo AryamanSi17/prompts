@@ -90,15 +90,18 @@ function Navbar({ user, setUser }) {
                 backdropFilter: 'blur(15px)',
                 zIndex: 1000
             }}>
-                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flex: 1 }}>
+                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 0, gap: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
                         <Link to="/" style={{ textDecoration: 'none', color: '#fff' }}>
-                            <h2 className="ndot" style={{ fontSize: '20px', margin: 0 }}>
-                                nano<span className="mobile-hide"> prompts</span><span style={{ color: 'var(--accent)' }}>.</span>
+                            <h2 className="ndot" style={{ fontSize: '18px', margin: 0, whiteSpace: 'nowrap' }}>
+                                nano prompts<span style={{ color: 'var(--accent)' }}>.</span>
                             </h2>
                         </Link>
+                    </div>
+                    <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
                         <UserSearch />
                     </div>
+
 
                     <div className="mobile-hide" style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
                         <NavLinks />

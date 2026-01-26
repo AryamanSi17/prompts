@@ -7,13 +7,14 @@ import Landing from './pages/Landing';
 import Library from './pages/Library';
 import TextPrompts from './pages/TextPrompts';
 import PromptBuilder from './pages/PromptBuilder';
+import Feed from './pages/Feed';
+import Profile from './pages/Profile';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Privacy from './pages/Privacy';
 import Contact from './pages/Contact';
 import { ToastProvider } from './context/ToastContext';
-
-
+import API from './utils/api';
 
 function App() {
     const [user, setUser] = useState(null);
@@ -21,8 +22,11 @@ function App() {
 
     useEffect(() => {
         const savedUser = localStorage.getItem('user');
-        if (savedUser) {
+        const token = localStorage.getItem('token');
+
+        if (savedUser && token) {
             setUser(JSON.parse(savedUser));
+            API.setToken(token);
         }
         setLoading(false);
     }, []);
@@ -37,7 +41,9 @@ function App() {
                     <div style={{ flex: 1 }}>
                         <Routes>
                             <Route path="/" element={<Landing />} />
-                            <Route path="/auth" element={!user ? <Auth setUser={setUser} /> : <Navigate to="/dashboard" />} />
+                            <Route path="/auth" element={!user ? <Auth setUser={setUser} /> : <Navigate to="/feed" />} />
+                            <Route path="/feed" element={user ? <Feed /> : <Navigate to="/auth" />} />
+                            <Route path="/profile/:username" element={<Profile />} />
                             <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/auth" />} />
                             <Route path="/settings" element={user ? <Settings /> : <Navigate to="/auth" />} />
                             <Route path="/library" element={<Library />} />

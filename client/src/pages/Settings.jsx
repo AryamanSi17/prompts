@@ -1,110 +1,233 @@
 import React, { useState, useEffect } from 'react';
-import { Key, Save, AlertCircle } from 'lucide-react';
+import { User as UserIcon, Camera, Save } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
+import { useNavigate } from 'react-router-dom';
+import API from '../utils/api';
 
 function Settings() {
-    const [apiKey, setApiKey] = useState('');
-    const [saved, setSaved] = useState(false);
+    const [user, setUser] = useState(null);
+    const [displayName, setDisplayName] = useState('');
+    const [bio, setBio] = useState('');
+    const [website, setWebsite] = useState('');
+    const [avatar, setAvatar] = useState('');
+    const [loading, setLoading] = useState(false);
     const { addToast } = useToast();
+    const navigate = useNavigate();
 
     useEffect(() => {
-        document.title = 'config | nano prompts.';
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (user?.apiKey) setApiKey(user.apiKey);
+        document.title = 'settings | nano prompts.';
+        const userData = JSON.parse(localStorage.getItem('user'));
+        if (userData) {
+            setUser(userData);
+            setDisplayName(userData.displayName || '');
+            setBio(userData.bio || '');
+            setWebsite(userData.website || '');
+            setAvatar(userData.avatar || '');
+        }
     }, []);
 
-    const handleSave = () => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        user.apiKey = apiKey;
-        localStorage.setItem('user', JSON.stringify(user));
-        setSaved(true);
-        addToast('api configuration saved successfully', 'success');
-        setTimeout(() => setSaved(false), 3000);
+    const handleSave = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+
+        try {
+            const data = await API.users.updateProfile({
+                displayName,
+                bio,
+                website
+            });
+
+            const updatedUser = { ...user, ...data.user };
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            setUser(updatedUser);
+            addToast('Profile updated successfully', 'success');
+        } catch (err) {
+            addToast(err.message, 'error');
+        } finally {
+            setLoading(false);
+        }
     };
 
-    return (
-        <div className="container fade-in" style={{ padding: '80px 0' }}>
-            <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-                <h1 className="ndot" style={{ fontSize: '40px', marginBottom: '8px', textTransform: 'lowercase' }}>settings.</h1>
-                <p style={{ color: 'var(--text-dim)', marginBottom: '40px', textTransform: 'lowercase' }}>configure your ai integration preferences.</p>
+    const handleAvatarChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
 
-                <div className="glass" style={{ padding: 'min(40px, 8vw)', marginBottom: '32px' }}>
-                    <h2 style={{ fontSize: '18px', marginBottom: '24px', fontWeight: 600, textTransform: 'lowercase' }}>how to get your api key</h2>
-                    <ul style={{ color: 'var(--text-dim)', fontSize: '14px', lineHeight: '1.6', paddingLeft: '20px', textTransform: 'lowercase' }}>
-                        <li>1. visit the <a href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)', textDecoration: 'underline' }}>google ai studio</a>.</li>
-                        <li>2. sign in with your google account.</li>
-                        <li>3. click on "create api key" and copy the generated key.</li>
-                        <li>4. paste it into the field below to activate the prompt engine.</li>
-                    </ul>
+        const maxSize = 5 * 1024 * 1024;
+        if (file.size > maxSize) {
+            addToast('Image too large. Max 5MB', 'error');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('avatar', file);
+
+        try {
+            const data = await API.users.updateAvatar(formData);
+            const updatedUser = { ...user, avatar: data.avatar };
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            setUser(updatedUser);
+            setAvatar(data.avatar);
+            addToast('Avatar updated successfully', 'success');
+        } catch (err) {
+            addToast(err.message, 'error');
+        }
+    };
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        API.setToken(null);
+        navigate('/auth');
+        addToast('Logged out successfully', 'success');
+    };
+
+    if (!user) {
+        return (
+            <div style={{ textAlign: 'center', padding: '100px 20px' }}>
+                <div className="spin" style={{
+                    width: '40px',
+                    height: '40px',
+                    border: '3px solid var(--border)',
+                    borderTopColor: '#fff',
+                    borderRadius: '50%',
+                    margin: '0 auto'
+                }}></div>
+            </div>
+        );
+    }
+
+    return (
+        <div className="container fade-in" style={{ padding: '80px 20px', maxWidth: '700px' }}>
+            <h1 className="ndot" style={{ fontSize: '40px', marginBottom: '8px', textTransform: 'lowercase' }}>settings</h1>
+            <p style={{ color: 'var(--text-dim)', marginBottom: '40px', textTransform: 'lowercase' }}>
+                manage your profile and account settings
+            </p>
+
+            <div className="glass" style={{ padding: '40px', marginBottom: '24px' }}>
+                <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+                    <div style={{ position: 'relative', display: 'inline-block' }}>
+                        <div style={{
+                            width: '120px',
+                            height: '120px',
+                            borderRadius: '50%',
+                            background: avatar ? 'none' : 'var(--surface-alt)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            overflow: 'hidden',
+                            margin: '0 auto'
+                        }}>
+                            {avatar ? (
+                                <img
+                                    src={`http://localhost:5000${avatar}`}
+                                    alt={user.username}
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                            ) : (
+                                <UserIcon size={48} style={{ opacity: 0.3 }} />
+                            )}
+                        </div>
+                        <label style={{
+                            position: 'absolute',
+                            bottom: '0',
+                            right: '0',
+                            width: '36px',
+                            height: '36px',
+                            borderRadius: '50%',
+                            background: 'var(--accent)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            border: '3px solid #000'
+                        }}>
+                            <Camera size={18} style={{ color: '#000' }} />
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleAvatarChange}
+                                style={{ display: 'none' }}
+                            />
+                        </label>
+                    </div>
+                    <p style={{ marginTop: '12px', fontSize: '14px', color: 'var(--text-dim)' }}>
+                        @{user.username}
+                    </p>
                 </div>
 
-                <div className="glass" style={{ padding: 'min(40px, 8vw)' }}>
-                    <div style={{ marginBottom: '32px' }}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 600, textTransform: 'lowercase' }}>
-                                <Key size={16} />
-                                gemini api key
-                            </label>
-                            <button
-                                onClick={async () => {
-                                    const text = await navigator.clipboard.readText();
-                                    setApiKey(text);
-                                }}
-                                style={{ padding: '4px 12px', fontSize: '10px', border: '1px solid var(--border)', textTransform: 'lowercase' }}
-                            >
-                                paste from clipboard
-                            </button>
-                        </div>
+                <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <div>
+                        <label style={{ display: 'block', fontSize: '12px', marginBottom: '8px', textTransform: 'lowercase' }}>
+                            display name
+                        </label>
                         <input
-                            type="password"
-                            placeholder="enter your google gemini api key"
-                            value={apiKey}
-                            onChange={(e) => setApiKey(e.target.value)}
-                            style={{ padding: '16px', marginBottom: '12px' }}
+                            type="text"
+                            placeholder="Your Name"
+                            value={displayName}
+                            onChange={(e) => setDisplayName(e.target.value)}
+                            maxLength={50}
                         />
-                        <p style={{ fontSize: '12px', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '6px', textTransform: 'lowercase', marginBottom: '24px' }}>
-                            <AlertCircle size={12} />
-                            we don't store your gemini api key on our servers. it is kept only in your local browser storage.
+                    </div>
+
+                    <div>
+                        <label style={{ display: 'block', fontSize: '12px', marginBottom: '8px', textTransform: 'lowercase' }}>
+                            bio
+                        </label>
+                        <textarea
+                            placeholder="Tell us about yourself..."
+                            value={bio}
+                            onChange={(e) => setBio(e.target.value)}
+                            maxLength={300}
+                            style={{ minHeight: '100px', resize: 'vertical' }}
+                        />
+                        <p style={{ fontSize: '11px', color: 'var(--text-dim)', marginTop: '4px' }}>
+                            {bio.length}/300
                         </p>
                     </div>
 
-                    <div className="mobile-stack" style={{ display: 'flex', gap: '12px' }}>
-                        <button
-                            onClick={handleSave}
-                            style={{
-                                flex: 2,
-                                background: '#fff',
-                                color: '#000',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                gap: '10px',
-                                textTransform: 'lowercase'
-                            }}
-                        >
-                            <Save size={18} />
-                            {saved ? 'settings saved' : 'save configuration'}
-                        </button>
-                        <button
-                            onClick={() => {
-                                const user = JSON.parse(localStorage.getItem('user'));
-                                delete user.apiKey;
-                                localStorage.setItem('user', JSON.stringify(user));
-                                setApiKey('');
-                                addToast('api key deleted from browser storage', 'info');
-                            }}
-                            style={{
-                                flex: 1,
-                                border: '1px solid #ff4444',
-                                color: '#ff4444',
-                                background: 'transparent',
-                                textTransform: 'lowercase'
-                            }}
-                        >
-                            delete key
-                        </button>
+                    <div>
+                        <label style={{ display: 'block', fontSize: '12px', marginBottom: '8px', textTransform: 'lowercase' }}>
+                            website
+                        </label>
+                        <input
+                            type="url"
+                            placeholder="https://your-website.com"
+                            value={website}
+                            onChange={(e) => setWebsite(e.target.value)}
+                        />
                     </div>
-                </div>
+
+                    <button
+                        type="submit"
+                        disabled={loading}
+                        className="primary"
+                        style={{
+                            marginTop: '8px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            gap: '8px'
+                        }}
+                    >
+                        <Save size={18} />
+                        {loading ? 'saving...' : 'save changes'}
+                    </button>
+                </form>
+            </div>
+
+            <div className="glass" style={{ padding: '40px' }}>
+                <h3 style={{ fontSize: '18px', marginBottom: '16px', textTransform: 'lowercase' }}>account</h3>
+                <button
+                    onClick={handleLogout}
+                    style={{
+                        width: '100%',
+                        border: '1px solid #ff4444',
+                        color: '#ff4444',
+                        background: 'transparent'
+                    }}
+                >
+                    logout
+                </button>
             </div>
         </div>
     );

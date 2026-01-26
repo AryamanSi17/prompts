@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Settings, LogOut, Grid, Home, Book, AlignLeft, Menu, X, Wand2 } from 'lucide-react';
+import { Settings, Grid, Home, Book, AlignLeft, Menu, X, Wand2, User as UserIcon, Rss } from 'lucide-react';
+
+import UserSearch from './UserSearch';
 
 function Navbar({ user, setUser }) {
     const navigate = useNavigate();
@@ -8,6 +10,7 @@ function Navbar({ user, setUser }) {
 
     const handleLogout = () => {
         localStorage.removeItem('user');
+        localStorage.removeItem('token');
         setUser(null);
         navigate('/');
         setIsMenuOpen(false);
@@ -27,36 +30,39 @@ function Navbar({ user, setUser }) {
 
             <Link to="/text-prompts" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <AlignLeft size={18} />
-                <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>text prompts</span>
-            </Link>
-
-            <Link to="/builder" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <Wand2 size={18} />
-                <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>drafter</span>
+                <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>text</span>
             </Link>
 
             {user ? (
                 <>
-                    <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <Grid size={18} />
-                        <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>playground</span>
+                    <Link to="/feed" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <Rss size={18} />
+                        <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>feed</span>
                     </Link>
-                    <Link to="/settings" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <Settings size={18} />
-                        <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>config</span>
+
+                    <Link to={`/profile/${user.username}`} onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '50%',
+                            background: user.avatar ? 'none' : 'var(--surface-alt)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            overflow: 'hidden'
+                        }}>
+                            {user.avatar ? (
+                                <img
+                                    src={`http://localhost:5000${user.avatar}`}
+                                    alt={user.username}
+                                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                                />
+                            ) : (
+                                <UserIcon size={12} style={{ opacity: 0.5 }} />
+                            )}
+                        </div>
+                        <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>profile</span>
                     </Link>
-                    <button
-                        onClick={handleLogout}
-                        style={{
-                            padding: '8px 20px',
-                            fontSize: '12px',
-                            border: '1px solid rgba(255,255,255,0.2)',
-                            textTransform: 'lowercase',
-                            width: 'fit-content'
-                        }}
-                    >
-                        logout
-                    </button>
                 </>
             ) : (
                 <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
@@ -77,18 +83,20 @@ function Navbar({ user, setUser }) {
             zIndex: 1000
         }}>
             <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 0 }}>
-                <Link to="/" style={{ textDecoration: 'none', color: '#fff' }}>
-                    <h2 className="ndot" style={{ fontSize: '24px', margin: 0 }}>
-                        nano prompts<span style={{ color: 'var(--accent)' }}>.</span>
-                    </h2>
-                </Link>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+                    <Link to="/" style={{ textDecoration: 'none', color: '#fff' }}>
+                        <h2 className="ndot" style={{ fontSize: '24px', margin: 0 }}>
+                            nano prompts<span style={{ color: 'var(--accent)' }}>.</span>
+                        </h2>
+                    </Link>
+                    <UserSearch />
+                </div>
 
-                {/* Desktop Nav */}
-                <div className="mobile-hide" style={{ display: 'flex', gap: '32px', alignItems: 'center' }}>
+                <div className="mobile-hide" style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
                     <NavLinks />
                 </div>
 
-                {/* Mobile Toggle */}
+
                 <button
                     className="mobile-show"
                     onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -104,7 +112,6 @@ function Navbar({ user, setUser }) {
                 </button>
             </div>
 
-            {/* Mobile Menu Overlay */}
             {isMenuOpen && (
                 <div style={{
                     position: 'fixed',

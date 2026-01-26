@@ -3,9 +3,10 @@ export const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5
 
 class API {
     constructor() {
-        this.baseURL = `${API_BASE}/api`;
+        this.baseURL = API_BASE.endsWith('/api') ? API_BASE : `${API_BASE}/api`;
         this.token = localStorage.getItem('token');
     }
+
 
     setToken(token) {
         this.token = token;

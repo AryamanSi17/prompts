@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, User as UserIcon, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import API from '../utils/api';
+import API, { API_BASE } from '../utils/api';
+
 
 function UserSearch() {
     const [query, setQuery] = useState('');
@@ -183,7 +184,8 @@ function UserSearch() {
                                         border: '1px solid var(--border)'
                                     }}>
                                         {user.avatar ? (
-                                            <img src={`http://localhost:5000${user.avatar}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                            <img src={`${API_BASE}${user.avatar}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+
                                         ) : (
                                             <UserIcon size={14} style={{ opacity: 0.5 }} />
                                         )}

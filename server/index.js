@@ -8,7 +8,31 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// HELP DEBUG VERCEL CRASHES
+// 1. DATABASE CONNECTION (Top level, non-blocking but optimized)
+const MONGODB_URI = process.env.MONGODB_URI;
+let isConnected = false;
+
+const connectDB = async () => {
+    if (isConnected) return;
+
+    try {
+        mongoose.set('strictQuery', false);
+        const db = await mongoose.connect(MONGODB_URI || 'mongodb://localhost:27017/prompts', {
+            serverSelectionTimeoutMS: 10000, // 10s to find the server
+            socketTimeoutMS: 45000,
+            maxPoolSize: 5, // Small pool for serverless
+        });
+        isConnected = db.connections[0].readyState === 1;
+        console.log('MongoDB Connected');
+    } catch (err) {
+        console.error('MongoDB Connection Error:', err.message);
+    }
+};
+
+// Start connecting immediately
+connectDB();
+
+// 2. HELP DEBUG VERCEL CRASHES
 process.on('uncaughtException', (err) => {
     console.error('FATAL ERROR: Uncaught Exception', err);
 });
@@ -17,15 +41,16 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error('FATAL ERROR: Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-// Root route - should be very fast
+// 3. MIDDLEWARE
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.get('/', (req, res) => {
-    res.json({
-        message: 'nano prompts API',
-        status: 'live',
-        node_env: process.env.NODE_ENV,
-        timestamp: new Date().toISOString()
-    });
+// Ensure DB is connected before processing requests
+app.use(async (req, res, next) => {
+    if (mongoose.connection.readyState !== 1) {
+        await connectDB();
+    }
+    next();
 });
 
 // Manual CORS Middleware
@@ -48,13 +73,19 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// 4. ROUTES
+app.get('/', (req, res) => {
+    res.json({
+        message: 'nano prompts API',
+        status: 'live',
+        db: mongoose.connection.readyState === 1 ? 'connected' : 'connecting',
+        timestamp: new Date().toISOString()
+    });
+});
 
-// Serve static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routes - Lazy require might help if a route is heavy
+// Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/prompts', require('./routes/prompts'));
 app.use('/api/posts', require('./routes/posts'));
@@ -65,21 +96,7 @@ app.get('/health', (req, res) => {
     res.json({ status: 'ok', db: mongoose.connection.readyState });
 });
 
-// MongoDB Connection with strict timeouts for Vercel
-const MONGODB_URI = process.env.MONGODB_URI;
-
-if (MONGODB_URI) {
-    mongoose.set('strictQuery', false);
-    mongoose.connect(MONGODB_URI, {
-        serverSelectionTimeoutMS: 5000,
-        maxPoolSize: 1
-    }).then(() => console.log('DB Connected'))
-        .catch(err => console.error('DB Error:', err.message));
-} else if (process.env.VERCEL) {
-    console.warn('MONGODB_URI missing in Vercel environment');
-}
-
-// Global Error Handler
+// 5. GLOBAL ERROR HANDLER
 app.use((err, req, res, next) => {
     console.error('SERVER ERROR:', err);
     res.status(err.status || 500).json({

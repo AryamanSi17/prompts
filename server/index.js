@@ -13,12 +13,31 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/prompts')
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (!MONGODB_URI && process.env.VERCEL) {
+    console.error('CRITICAL: MONGODB_URI is missing on Vercel environment');
+}
+
+mongoose.connect(MONGODB_URI || 'mongodb://localhost:27017/prompts')
+
     .then(() => {
         console.log('Connected to MongoDB');
-        mongoose.model('Prompt').syncIndexes().catch(() => { });
+        // Ensure models are registered or just skip sync if it causes issues on Vercel
+        try {
+            if (mongoose.models.Prompt) {
+                mongoose.models.Prompt.syncIndexes().catch(() => { });
+            }
+        } catch (e) {
+            console.warn('Index sync skipped');
+        }
     })
     .catch(err => console.error('MongoDB connection error:', err));
+
+app.get('/', (req, res) => {
+    res.json({ message: 'nano prompts API', status: 'live' });
+});
+
 
 app.use((req, res, next) => {
     const origin = req.headers.origin;
@@ -75,9 +94,12 @@ app.use((err, req, res, next) => {
     });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Demo login: demo@nanoprompts.space / demo123`);
-});
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+    app.listen(PORT, () => {
+        console.log(`Server running on port ${PORT}`);
+        console.log(`Demo login: demo@nanoprompts.space / demo123`);
+    });
+}
+
 
 module.exports = app;

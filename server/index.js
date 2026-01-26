@@ -1,49 +1,39 @@
 const express = require('express');
-const cors = require('cors');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
 const path = require('path');
-const authRoutes = require('./routes/auth');
-const promptRoutes = require('./routes/prompts');
-const postRoutes = require('./routes/posts');
-const userRoutes = require('./routes/users');
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const MONGODB_URI = process.env.MONGODB_URI;
-
-if (!MONGODB_URI && process.env.VERCEL) {
-    console.error('CRITICAL: MONGODB_URI is missing on Vercel environment');
-}
-
-mongoose.connect(MONGODB_URI || 'mongodb://localhost:27017/prompts')
-
-    .then(() => {
-        console.log('Connected to MongoDB');
-        // Ensure models are registered or just skip sync if it causes issues on Vercel
-        try {
-            if (mongoose.models.Prompt) {
-                mongoose.models.Prompt.syncIndexes().catch(() => { });
-            }
-        } catch (e) {
-            console.warn('Index sync skipped');
-        }
-    })
-    .catch(err => console.error('MongoDB connection error:', err));
-
-app.get('/', (req, res) => {
-    res.json({ message: 'nano prompts API', status: 'live' });
+// HELP DEBUG VERCEL CRASHES
+process.on('uncaughtException', (err) => {
+    console.error('FATAL ERROR: Uncaught Exception', err);
 });
 
+process.on('unhandledRejection', (reason, promise) => {
+    console.error('FATAL ERROR: Unhandled Rejection at:', promise, 'reason:', reason);
+});
 
+// Root route - should be very fast
+
+app.get('/', (req, res) => {
+    res.json({
+        message: 'nano prompts API',
+        status: 'live',
+        node_env: process.env.NODE_ENV,
+        timestamp: new Date().toISOString()
+    });
+});
+
+// Manual CORS Middleware
 app.use((req, res, next) => {
     const origin = req.headers.origin;
     const allowedOrigins = ['https://nanoprompts.space', 'https://www.nanoprompts.space', 'http://localhost:3000'];
 
-    if (allowedOrigins.includes(origin)) {
+    if (origin && (allowedOrigins.includes(origin) || origin.includes('localhost'))) {
         res.setHeader('Access-Control-Allow-Origin', origin);
     }
 
@@ -58,48 +48,47 @@ app.use((req, res, next) => {
     next();
 });
 
-
-
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Serve static files (uploaded media)
+// Serve static files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Add caching for GET requests
-app.use((req, res, next) => {
-    if (req.method === 'GET') {
-        res.set('Cache-Control', 'public, max-age=300'); // Cache for 5 mins
-    }
-    next();
-});
-
-// Routes
-app.use('/api/auth', authRoutes);
-app.use('/api/prompts', promptRoutes);
-app.use('/api/posts', postRoutes);
-app.use('/api/users', userRoutes);
+// Routes - Lazy require might help if a route is heavy
+app.use('/api/auth', require('./routes/auth'));
+app.use('/api/prompts', require('./routes/prompts'));
+app.use('/api/posts', require('./routes/posts'));
+app.use('/api/users', require('./routes/users'));
 
 // Health check
 app.get('/health', (req, res) => {
-    res.json({ status: 'ok', timestamp: new Date().toISOString() });
+    res.json({ status: 'ok', db: mongoose.connection.readyState });
 });
 
-// Error handling middleware
+// MongoDB Connection with strict timeouts for Vercel
+const MONGODB_URI = process.env.MONGODB_URI;
+
+if (MONGODB_URI) {
+    mongoose.set('strictQuery', false);
+    mongoose.connect(MONGODB_URI, {
+        serverSelectionTimeoutMS: 5000,
+        maxPoolSize: 1
+    }).then(() => console.log('DB Connected'))
+        .catch(err => console.error('DB Error:', err.message));
+} else if (process.env.VERCEL) {
+    console.warn('MONGODB_URI missing in Vercel environment');
+}
+
+// Global Error Handler
 app.use((err, req, res, next) => {
-    console.error('Error:', err);
+    console.error('SERVER ERROR:', err);
     res.status(err.status || 500).json({
         error: err.message || 'Internal server error'
     });
 });
 
 if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
-    app.listen(PORT, () => {
-        console.log(`Server running on port ${PORT}`);
-        console.log(`Demo login: demo@nanoprompts.space / demo123`);
-    });
+    app.listen(PORT, () => console.log(`local: http://localhost:${PORT}`));
 }
-
 
 module.exports = app;

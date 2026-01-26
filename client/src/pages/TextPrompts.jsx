@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Search, Copy, Check, Loader2 } from 'lucide-react';
-import { useToast } from '../context/ToastContext';
+import API, { API_BASE } from '../utils/api';
 
 function TextPrompts() {
     const [prompts, setPrompts] = useState([]);
@@ -10,7 +10,6 @@ function TextPrompts() {
     const [searchQuery, setSearchQuery] = useState('');
     const [copiedId, setCopiedId] = useState(null);
     const { addToast } = useToast();
-    const apiBase = 'https://prompts-server-drab.vercel.app';
 
     useEffect(() => {
         document.title = 'text engines | nano prompts.';
@@ -19,8 +18,9 @@ function TextPrompts() {
     const fetchPrompts = useCallback(async (pageNum, query = '') => {
         setLoading(true);
         try {
-            const response = await fetch(`${apiBase}/api/prompts?page=${pageNum}&limit=10&search=${query}&type=photo`);
+            const response = await fetch(`${API_BASE}/api/prompts?page=${pageNum}&limit=10&search=${query}&type=photo`);
             const data = await response.json();
+
 
             if (pageNum === 1) {
                 setPrompts(data);

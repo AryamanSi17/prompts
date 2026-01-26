@@ -20,25 +20,13 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/prompts')
     })
     .catch(err => console.error('MongoDB connection error:', err));
 
-const allowedOrigins = [
-    'https://prompts-collect.vercel.app',
-    'https://nanoprompts.space',
-];
-
 app.use(cors({
-    origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            // Log the rejected origin for debugging
-            console.log('CORS rejected origin:', origin);
-            callback(new Error('Not allowed by CORS'));
-        }
-    },
+    origin: true,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept']
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'X-CSRF-Token', 'Accept-Version', 'Content-Length', 'Content-MD5', 'Date', 'X-Api-Version']
 }));
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

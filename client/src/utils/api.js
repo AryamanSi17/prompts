@@ -3,9 +3,14 @@ export const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5
 
 class API {
     constructor() {
-        this.baseURL = API_BASE.endsWith('/api') ? API_BASE : `${API_BASE}/api`;
+        // Remove trailing slashes and ensure it starts with / only if it's a relative path
+        let base = (API_BASE || '').replace(/\/$/, '');
+        this.baseURL = base.endsWith('/api') ? base : `${base}/api`;
+
+        console.log('[DEBUG] API Base URL:', this.baseURL);
         this.token = localStorage.getItem('token');
     }
+
 
 
     setToken(token) {

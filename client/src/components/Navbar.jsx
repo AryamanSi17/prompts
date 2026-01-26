@@ -14,10 +14,12 @@ function Navbar({ user, setUser }) {
     const handleLogout = () => {
         localStorage.removeItem('user');
         localStorage.removeItem('token');
+        API.setToken(null);
         setUser(null);
         navigate('/');
         setIsMenuOpen(false);
     };
+
 
     const NavLinks = () => (
         <>

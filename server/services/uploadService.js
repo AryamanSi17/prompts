@@ -35,17 +35,33 @@ if (!process.env.VERCEL) {
     });
 }
 
-// Storage configuration for posts (Always local initially for processing/compression)
-const postStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, postsDir);
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname);
-        cb(null, `post-${uniqueSuffix}${ext}`);
-    }
-});
+// Storage configuration for posts
+let postStorage;
+if (s3) {
+    postStorage = multerS3({
+        s3: s3,
+        bucket: bucketName,
+        acl: 'public-read',
+        contentType: multerS3.AUTO_CONTENT_TYPE,
+        key: (req, file, cb) => {
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+            const ext = path.extname(file.originalname);
+            cb(null, `posts/post-${uniqueSuffix}${ext}`);
+        }
+    });
+} else {
+    postStorage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, postsDir);
+        },
+        filename: (req, file, cb) => {
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+            const ext = path.extname(file.originalname);
+            cb(null, `post-${uniqueSuffix}${ext}`);
+        }
+    });
+}
+
 
 
 // Storage configuration for avatars
@@ -160,20 +176,21 @@ const uploadFileToS3 = async (localPath, s3Key, contentType) => {
     if (!s3) return null;
     try {
         const fileStream = fs.createReadStream(localPath);
-        const command = new PutObjectCommand({
+        await s3.send(new PutObjectCommand({
             Bucket: bucketName,
             Key: s3Key,
             Body: fileStream,
             ContentType: contentType,
             ACL: 'public-read'
-        });
-        await s3.send(command);
+        }));
+        // Use the virtual-host style URL which is more reliable
         return `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
     } catch (error) {
         console.error('Manual S3 upload error:', error);
         return null;
     }
 };
+
 
 module.exports = {
     uploadPost,

@@ -25,31 +25,25 @@ router.post('/', authMiddleware, (req, res) => {
             const file = req.file;
             const isVideo = file.mimetype.startsWith('video/');
 
+            // Determine the URL based on storage (S3 vs local)
+            const mediaUrl = file.location || `/uploads/posts/${file.filename}`;
+
             let postData = {
                 userId: req.userId,
                 type: isVideo ? 'video' : 'photo',
                 caption: caption || '',
                 prompt: prompt || '',
                 guide: guide || '',
-                mediaUrl: `/uploads/posts/${file.filename}`,
+                mediaUrl: mediaUrl,
                 originalSize: file.size
             };
 
-            // If S3 is enabled and it's a photo, upload it now
-            if (isS3 && !isVideo) {
-                const s3Url = await uploadFileToS3(file.path, `posts/${file.filename}`, file.mimetype);
-                if (s3Url) {
-                    postData.mediaUrl = s3Url;
-                    deleteFile(file.path); // Delete local file after S3 upload
-                }
-            }
-
-            // Create post first so we have the ID for async video processing updates
+            // Create post first
             const post = new Post(postData);
             await post.save();
 
-            // Handle video compression and S3 upload for videos
-            if (isVideo) {
+            // Handle video processing only if local storage was used (since FFmpeg needs a local path)
+            if (isVideo && file.path) {
                 const compressedFilename = `compressed-${file.filename.replace(path.extname(file.filename), '.mp4')}`;
                 const compressedPath = path.join(path.dirname(file.path), compressedFilename);
                 const thumbnailFilename = `thumb-${file.filename.replace(path.extname(file.filename), '.jpg')}`;
@@ -64,7 +58,7 @@ router.post('/', authMiddleware, (req, res) => {
                     .then(async (result) => {
                         let finalMediaUrl = `/uploads/posts/${compressedFilename}`;
 
-                        // If S3, upload compressed video
+                        // If S3 set up, upload compressed video
                         if (isS3) {
                             const s3Url = await uploadFileToS3(compressedPath, `posts/${compressedFilename}`, 'video/mp4');
                             if (s3Url) {
@@ -113,14 +107,15 @@ router.post('/', authMiddleware, (req, res) => {
             await post.populate('userId', 'username displayName avatar');
 
             res.status(201).json({
-                message: isVideo ? 'Video uploaded. Processing...' : 'Photo uploaded successfully',
+                message: isVideo && file.path ? 'Video uploaded. Processing...' : 'Uploaded successfully',
                 post
             });
         } catch (error) {
-            if (req.file) deleteFile(req.file.path);
+            if (req.file && req.file.path) deleteFile(req.file.path);
             console.error('Create post error:', error);
             res.status(500).json({ error: 'Failed to create post' });
         }
+
     });
 });
 

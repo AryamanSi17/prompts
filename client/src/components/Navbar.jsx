@@ -12,13 +12,10 @@ function Navbar({ user, setUser }) {
 
 
     const handleLogout = () => {
-        localStorage.removeItem('user');
-        localStorage.removeItem('token');
-        API.setToken(null);
-        setUser(null);
-        navigate('/');
-        setIsMenuOpen(false);
+        localStorage.clear(); // Clear everything
+        window.location.href = '/'; // Hard refresh and redirect to home
     };
+
 
 
     const NavLinks = () => (

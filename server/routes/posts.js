@@ -98,39 +98,37 @@ router.post('/', authMiddleware, (req, res) => {
     });
 });
 
-// Get feed (posts from followed users + own posts)
+// Get feed - Global discovery feed (all posts from all users)
 router.get('/feed', authMiddleware, async (req, res) => {
     try {
         const { page = 1, limit = 20 } = req.query;
         const skip = (page - 1) * limit;
 
-        // Get users that the current user follows
-        const Follow = require('../models/Follow');
-        const following = await Follow.find({ follower: req.userId }).select('following');
-        const followingIds = following.map(f => f.following);
-
-        // Include own posts too
-        const userIds = [...followingIds, req.userId];
-
-        const posts = await Post.find({ userId: { $in: userIds } })
+        // Get ALL posts from ALL users, sorted by newest first
+        const posts = await Post.find({})
             .sort({ createdAt: -1 })
             .skip(skip)
             .limit(parseInt(limit))
             .populate('userId', 'username displayName avatar');
 
-        // Check if user has liked each post
+        // Check if current user has liked each post
         const postsWithLikeStatus = posts.map(post => {
             const postObj = post.toObject();
             postObj.isLiked = post.likes.some(like => like.toString() === req.userId.toString());
             return postObj;
         });
 
-        res.json({ posts: postsWithLikeStatus, page: parseInt(page), hasMore: posts.length === parseInt(limit) });
+        res.json({
+            posts: postsWithLikeStatus,
+            page: parseInt(page),
+            hasMore: posts.length === parseInt(limit)
+        });
     } catch (error) {
         console.error('Get feed error:', error);
         res.status(500).json({ error: 'Failed to fetch feed' });
     }
 });
+
 
 // Get user's posts
 router.get('/user/:username', optionalAuth, async (req, res) => {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Upload, Heart, MessageCircle, User as UserIcon, Terminal, BookOpen, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import API, { API_BASE } from '../utils/api';
@@ -9,26 +9,53 @@ import Image from '../components/Image';
 function Feed() {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const [showUpload, setShowUpload] = useState(false);
     const { addToast } = useToast();
+    const observerTarget = useRef(null);
 
     useEffect(() => {
         document.title = 'feed | nano prompts.';
-        loadFeed();
+        loadFeed(1);
     }, []);
 
-    const loadFeed = async () => {
+    // Infinite scroll observer
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            entries => {
+                if (entries[0].isIntersecting && hasMore && !loading && !loadingMore) {
+                    loadMorePosts();
+                }
+            },
+            { threshold: 0.1 }
+        );
+
+        if (observerTarget.current) {
+            observer.observe(observerTarget.current);
+        }
+
+        return () => {
+            if (observerTarget.current) {
+                observer.unobserve(observerTarget.current);
+            }
+        };
+    }, [hasMore, loading, loadingMore, page]);
+
+    const loadFeed = async (pageNum = page) => {
         try {
-            setLoading(true);
-            const data = await API.posts.getFeed(page, 20);
-            setPosts(prev => page === 1 ? data.posts : [...prev, ...data.posts]);
+            if (pageNum === 1) setLoading(true);
+            else setLoadingMore(true);
+
+            const data = await API.posts.getFeed(pageNum, 10);
+            setPosts(prev => pageNum === 1 ? data.posts : [...prev, ...data.posts]);
             setHasMore(data.hasMore);
         } catch (err) {
             addToast(err.message, 'error');
         } finally {
             setLoading(false);
+            setLoadingMore(false);
         }
     };
 
@@ -45,10 +72,14 @@ function Feed() {
         }
     };
 
-    const loadMore = () => {
-        setPage(prev => prev + 1);
-        setTimeout(loadFeed, 100);
-    };
+    const loadMorePosts = useCallback(() => {
+
+        if (!hasMore || loading || loadingMore) return;
+        const nextPage = page + 1;
+        setPage(nextPage);
+        loadFeed(nextPage);
+    }, [page, hasMore, loading, loadingMore]);
+
 
     return (
         <main className="container" style={{ padding: '80px 20px', maxWidth: '700px', paddingBottom: '100px' }}>
@@ -58,8 +89,14 @@ function Feed() {
                 alignItems: 'center',
                 marginBottom: '40px'
             }}>
-                <h1 className="ndot" style={{ fontSize: '32px', textTransform: 'lowercase' }}>feed</h1>
+                <div>
+                    <h1 className="ndot" style={{ fontSize: '32px', textTransform: 'lowercase', marginBottom: '4px' }}>discover</h1>
+                    <p style={{ fontSize: '13px', color: 'var(--text-dim)', textTransform: 'lowercase' }}>
+                        ai creations from the community
+                    </p>
+                </div>
                 <button
+
                     onClick={() => setShowUpload(true)}
                     className="primary"
                     style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 24px' }}
@@ -84,8 +121,9 @@ function Feed() {
                 <div className="glass" style={{ padding: '60px 20px', textAlign: 'center' }}>
                     <UserIcon size={48} style={{ opacity: 0.2, marginBottom: '16px' }} />
                     <p style={{ color: 'var(--text-dim)', textTransform: 'lowercase' }}>
-                        no posts yet. follow users or create your first post!
+                        no posts yet. be the first to share your ai creation!
                     </p>
+
                     <button
                         onClick={() => setShowUpload(true)}
                         className="primary"
@@ -234,18 +272,38 @@ function Feed() {
                         </div>
                     ))}
 
-                    {hasMore && (
-                        <button
-                            onClick={loadMore}
-                            disabled={loading}
-                            className="glass"
-                            style={{ padding: '16px', width: '100%' }}
-                        >
-                            {loading ? 'loading...' : 'load more'}
-                        </button>
-                    )}
+                    {/* Infinite scroll trigger */}
+                    <div
+                        ref={observerTarget}
+                        style={{
+                            height: '20px',
+                            margin: '20px 0',
+                            display: 'flex',
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}
+                    >
+                        {loadingMore && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--text-dim)', fontSize: '13px' }}>
+                                <div className="spin" style={{
+                                    width: '18px',
+                                    height: '18px',
+                                    border: '2px solid var(--border)',
+                                    borderTopColor: '#fff',
+                                    borderRadius: '50%'
+                                }}></div>
+                                loading more...
+                            </div>
+                        )}
+                        {!hasMore && posts.length > 0 && (
+                            <p style={{ color: 'var(--text-dim)', fontSize: '13px', textAlign: 'center', padding: '20px' }}>
+                                you're all caught up! 🎉
+                            </p>
+                        )}
+                    </div>
                 </div>
             )}
+
 
             {showUpload && <UploadModal onClose={() => setShowUpload(false)} onSuccess={() => {
                 setShowUpload(false);

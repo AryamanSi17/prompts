@@ -73,71 +73,95 @@ function Navbar({ user, setUser }) {
     );
 
     return (
-        <nav style={{
-            padding: '20px',
-            borderBottom: '1px solid var(--border)',
-            position: 'sticky',
-            top: 0,
-            background: 'rgba(0,0,0,0.8)',
-            backdropFilter: 'blur(10px)',
-            zIndex: 1000
-        }}>
-            <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 0 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-                    <Link to="/" style={{ textDecoration: 'none', color: '#fff' }}>
-                        <h2 className="ndot" style={{ fontSize: '24px', margin: 0 }}>
-                            nano prompts<span style={{ color: 'var(--accent)' }}>.</span>
-                        </h2>
+        <>
+            <nav style={{
+                padding: '15px 20px',
+                borderBottom: '1px solid var(--border)',
+                position: 'fixed',
+                top: 0,
+                left: 0,
+                width: '100%',
+                background: 'rgba(0,0,0,0.85)',
+                backdropFilter: 'blur(15px)',
+                zIndex: 1000
+            }}>
+                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 0 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '24px', flex: 1 }}>
+                        <Link to="/" style={{ textDecoration: 'none', color: '#fff' }}>
+                            <h2 className="ndot" style={{ fontSize: '20px', margin: 0 }}>
+                                nano<span className="mobile-hide"> prompts</span><span style={{ color: 'var(--accent)' }}>.</span>
+                            </h2>
+                        </Link>
+                        <UserSearch />
+                    </div>
+
+                    <div className="mobile-hide" style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+                        <NavLinks />
+                    </div>
+                </div>
+            </nav>
+
+            {/* Mobile Bottom Navigation */}
+            <div className="mobile-show" style={{
+                position: 'fixed',
+                bottom: 0,
+                left: 0,
+                width: '100%',
+                background: 'rgba(0,0,0,0.9)',
+                backdropFilter: 'blur(20px)',
+                borderTop: '1px solid var(--border)',
+                display: 'none',
+                justifyContent: 'space-around',
+                alignItems: 'center',
+                padding: '12px 10px',
+                zIndex: 1000,
+                paddingBottom: 'calc(12px + env(safe-area-inset-bottom))'
+            }}>
+                <Link to="/" style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                    <Home size={22} />
+                </Link>
+
+                <Link to="/library" style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                    <Book size={22} />
+                </Link>
+
+                {user ? (
+                    <>
+                        <Link to="/feed" style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                            <Rss size={22} />
+                        </Link>
+
+                        <Link to={`/profile/${user.username}`} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                            <div style={{
+                                width: '24px',
+                                height: '24px',
+                                borderRadius: '50%',
+                                background: user.avatar ? 'none' : 'var(--surface-alt)',
+                                border: '1px solid var(--border)',
+                                overflow: 'hidden'
+                            }}>
+                                {user.avatar ? (
+                                    <img src={`http://localhost:5000${user.avatar}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                                ) : (
+                                    <UserIcon size={12} style={{ opacity: 0.5 }} />
+                                )}
+                            </div>
+                        </Link>
+                    </>
+                ) : (
+                    <Link to="/auth" style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                        <UserIcon size={22} />
                     </Link>
-                    <UserSearch />
-                </div>
-
-                <div className="mobile-hide" style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-                    <NavLinks />
-                </div>
-
-
-                <button
-                    className="mobile-show"
-                    onClick={() => setIsMenuOpen(!isMenuOpen)}
-                    style={{
-                        display: 'none',
-                        background: 'transparent',
-                        border: 'none',
-                        padding: '8px',
-                        color: '#fff'
-                    }}
-                >
-                    {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-                </button>
+                )}
             </div>
-
-            {isMenuOpen && (
-                <div style={{
-                    position: 'fixed',
-                    top: '73px',
-                    left: 0,
-                    width: '100%',
-                    height: 'calc(100vh - 73px)',
-                    background: '#000',
-                    padding: '40px 20px',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '32px',
-                    zIndex: 999,
-                    animation: 'fadeIn 0.2s ease-out'
-                }}>
-                    <NavLinks />
-                </div>
-            )}
 
             <style>{`
                 @media (max-width: 768px) {
                     .mobile-hide { display: none !important; }
-                    .mobile-show { display: block !important; }
+                    .mobile-show { display: flex !important; }
                 }
             `}</style>
-        </nav>
+        </>
     );
 }
 

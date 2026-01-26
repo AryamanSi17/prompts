@@ -20,12 +20,29 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/prompts')
     })
     .catch(err => console.error('MongoDB connection error:', err));
 
-app.use(cors({
-    origin: true,
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept', 'X-CSRF-Token', 'Accept-Version', 'Content-Length', 'Content-MD5', 'Date', 'X-Api-Version']
-}));
+app.use((req, res, next) => {
+    const origin = req.headers.origin;
+
+    // Echo the origin to allow all domains while supporting credentials
+    if (origin) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+    }
+
+    // Essential for Vercel caching to avoid serving headers from one origin to another
+    res.setHeader('Vary', 'Origin');
+
+    res.setHeader('Access-Control-Allow-Credentials', 'true');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+    res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
+
+    // Handle Preflight (OPTIONS)
+    if (req.method === 'OPTIONS') {
+        return res.sendStatus(200);
+    }
+    next();
+});
+
+
 
 
 app.use(express.json());

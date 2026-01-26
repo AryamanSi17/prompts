@@ -146,7 +146,8 @@ class API {
             this.request(`/users/${userId}/following?page=${page}&limit=${limit}`, { auth: false }),
 
         search: (query, limit = 10) =>
-            this.request(`/users/search?q=${query}&limit=${limit}`, { auth: false }),
+            this.request(`/users/search?q=${encodeURIComponent(query)}&limit=${limit}`, { auth: false }),
+
     };
 }
 

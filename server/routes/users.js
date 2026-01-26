@@ -6,6 +6,38 @@ const { authMiddleware, optionalAuth } = require('../middleware/auth');
 const { uploadAvatar, deleteFile } = require('../services/uploadService');
 const path = require('path');
 
+// Search users - MUST come before /:username route!
+router.get('/search', optionalAuth, async (req, res) => {
+    try {
+        const { q, limit = 10 } = req.query;
+        console.log('[DEBUG] Search Query Received:', q);
+
+        if (!q || q.trim().length === 0) {
+            console.log('[DEBUG] Empty query, returning []');
+            return res.json({ users: [] });
+        }
+
+        const searchQuery = q.trim();
+        console.log('[DEBUG] Trimmed query:', searchQuery);
+
+        const users = await User.find({
+            $or: [
+                { username: { $regex: searchQuery, $options: 'i' } },
+                { displayName: { $regex: searchQuery, $options: 'i' } }
+            ]
+        })
+            .select('username displayName avatar followersCount isVerified')
+            .limit(parseInt(limit));
+
+        console.log('[DEBUG] Found users:', users.length, users.map(u => u.username));
+
+        res.json({ users });
+    } catch (error) {
+        console.error('Search users error:', error);
+        res.status(500).json({ error: 'Failed to search users' });
+    }
+});
+
 // Get user profile
 router.get('/:username', optionalAuth, async (req, res) => {
     try {
@@ -37,6 +69,7 @@ router.get('/:username', optionalAuth, async (req, res) => {
         res.status(500).json({ error: 'Failed to fetch profile' });
     }
 });
+
 
 // Update profile
 router.put('/profile', authMiddleware, async (req, res) => {
@@ -214,37 +247,6 @@ router.get('/:userId/following', optionalAuth, async (req, res) => {
     }
 });
 
-// Search users
-router.get('/search', optionalAuth, async (req, res) => {
-    try {
-        const { q, limit = 10 } = req.query;
-        console.log('[DEBUG] Search Query Received:', q);
-
-        if (!q || q.trim().length === 0) {
-            console.log('[DEBUG] Empty query, returning []');
-
-
-
-            return res.json({ users: [] });
-        }
-
-        const searchQuery = q.trim();
-        const users = await User.find({
-            $or: [
-                { username: { $regex: searchQuery, $options: 'i' } },
-                { displayName: { $regex: searchQuery, $options: 'i' } }
-            ]
-
-        })
-            .select('username displayName avatar followersCount')
-            .limit(parseInt(limit));
-
-
-        res.json({ users });
-    } catch (error) {
-        console.error('Search users error:', error);
-        res.status(500).json({ error: 'Failed to search users' });
-    }
-});
 
 module.exports = router;
+

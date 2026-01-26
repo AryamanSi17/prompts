@@ -88,7 +88,6 @@ function Navbar({ user, setUser }) {
                         <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>settings</span>
                     </Link>
 
-                    <button onClick={handleLogout} style={{ border: 'none', background: 'transparent', color: 'var(--text-dim)', fontSize: '10px', padding: '12px', opacity: 0.5, cursor: 'pointer' }}>logout</button>
                 </>
             ) : (
                 <Link to="/auth" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">

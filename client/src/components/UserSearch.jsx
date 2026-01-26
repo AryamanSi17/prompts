@@ -43,17 +43,20 @@ function UserSearch({ isMobileModal = false, onClose }) {
         setShowResults(true);
         setHasSearched(true);
 
+        console.log('[CLIENT] Searching for:', query);
         try {
             const data = await API.users.search(query, 10);
-            console.log('Search results:', data);
+            console.log('[CLIENT] Search API response:', data);
+            console.log('[CLIENT] Number of users found:', data.users?.length || 0);
             setResults(data.users || []);
         } catch (err) {
-            console.error('Search error:', err);
+            console.error('[CLIENT] Search error:', err);
             setResults([]);
         } finally {
             setLoading(false);
         }
     };
+
 
     const handleSelectUser = (username) => {
         navigate(`/profile/${username}`);

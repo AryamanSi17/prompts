@@ -50,7 +50,7 @@ function Library() {
 
             <div style={{ textAlign: 'center', marginBottom: '80px' }}>
                 <h1 className="ndot" style={{ fontSize: 'min(56px, 12vw)', marginBottom: '16px', textTransform: 'lowercase' }}>
-                    nano prompt <span style={{ color: 'var(--accent)' }}>library</span>.
+                    prompt <span style={{ color: 'var(--accent)' }}>library</span>.
                 </h1>
                 <p style={{ color: 'var(--text-dim)', fontSize: 'min(18px, 4.5vw)', maxWidth: '600px', margin: '0 auto 40px', lineHeight: '1.6', textTransform: 'lowercase', padding: '0 20px' }}>
                     a curated collection of the most powerful engines for google nano banana pro. find inspiration and start generating. —YouMind Repo

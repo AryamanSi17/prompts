@@ -105,46 +105,68 @@ function Navbar({ user, setUser }) {
                 </div>
             </nav>
 
-            {/* Vertical Sidebar - Right */}
-            <div className="sidebar-right" style={{
+            {/* Navigation Sidebar/Bottom Bar */}
+            <div className="nav-container-fixed" style={{
                 position: 'fixed',
-                right: '24px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '8px',
                 zIndex: 1001,
-                padding: '12px 8px',
                 background: 'rgba(15, 15, 15, 0.4)',
                 backdropFilter: 'blur(25px)',
-                borderRadius: '50px',
                 border: '1px solid var(--border)',
                 boxShadow: '0 10px 40px rgba(0,0,0,0.6)',
-                animation: 'fadeIn 0.5s ease-out'
+                animation: 'fadeIn 0.5s ease-out',
+                transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
             }}>
-                <NavLinks />
+                <div className="nav-links-wrapper" style={{ display: 'flex', gap: '8px' }}>
+                    <NavLinks />
+                </div>
             </div>
 
             <style>{`
+                .nav-container-fixed {
+                    right: 24px;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    padding: 12px 8px;
+                    border-radius: 50px;
+                }
+                .nav-links-wrapper {
+                    flex-direction: column;
+                }
                 .nav-item:hover {
                     color: #fff !important;
                     transform: scale(1.1);
                 }
                 
                 @media (max-width: 768px) {
-                    .sidebar-right {
-                        right: 8px;
-                        padding: 8px 4px;
+                    .nav-container-fixed {
+                        right: 0;
+                        left: 0;
+                        bottom: 0;
+                        top: auto;
+                        transform: none;
+                        border-radius: 24px 24px 0 0;
+                        padding: 12px 10px;
+                        padding-bottom: calc(12px + env(safe-area-inset-bottom));
+                        background: rgba(10, 10, 10, 0.9);
+                        border-left: none;
+                        border-right: none;
+                        border-bottom: none;
+                    }
+                    .nav-links-wrapper {
+                        flex-direction: row;
+                        justify-content: space-around;
+                        width: 100%;
                     }
                     .nav-item {
-                        padding: 10px 6px !important;
+                        padding: 8px !important;
+                        flex: 1;
                     }
                     .nav-item span {
                         display: none;
                     }
                 }
             `}</style>
+
         </>
     );
 }

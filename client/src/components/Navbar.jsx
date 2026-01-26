@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Settings, Grid, Home, Book, AlignLeft, Menu, X, Wand2, User as UserIcon, Rss } from 'lucide-react';
-
+import { Settings, Home, Book, AlignLeft, User as UserIcon, Rss } from 'lucide-react';
 import UserSearch from './UserSearch';
+import { API_BASE } from '../utils/api';
 
 function Navbar({ user, setUser }) {
     const navigate = useNavigate();
@@ -18,60 +18,60 @@ function Navbar({ user, setUser }) {
 
     const NavLinks = () => (
         <>
-            <Link to="/" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <Home size={18} />
-                <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>home</span>
+            <Link to="/library" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">
+                <Book size={20} />
+                <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>library</span>
             </Link>
 
-            <Link to="/library" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <Book size={18} />
-                <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>library</span>
-            </Link>
-
-            <Link to="/text-prompts" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <AlignLeft size={18} />
-                <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>text</span>
+            <Link to="/text-prompts" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">
+                <AlignLeft size={20} />
+                <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>text</span>
             </Link>
 
             {user ? (
                 <>
-                    <Link to="/feed" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <Rss size={18} />
-                        <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>feed</span>
+                    <Link to="/feed" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">
+                        <Rss size={20} />
+                        <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>feed</span>
                     </Link>
 
-                    <Link to={`/profile/${user.username}`} onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <Link to={`/profile/${user.username}`} onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">
                         <div style={{
-                            width: '24px',
-                            height: '24px',
+                            width: '28px',
+                            height: '28px',
                             borderRadius: '50%',
                             background: user.avatar ? 'none' : 'var(--surface-alt)',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            overflow: 'hidden'
+                            overflow: 'hidden',
+                            border: '1px solid var(--border)'
                         }}>
                             {user.avatar ? (
                                 <img
-                                    src={`http://localhost:5000${user.avatar}`}
+                                    src={`${API_BASE}${user.avatar}`}
                                     alt={user.username}
                                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                 />
                             ) : (
-                                <UserIcon size={12} style={{ opacity: 0.5 }} />
+                                <UserIcon size={14} style={{ opacity: 0.5 }} />
                             )}
                         </div>
-                        <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>profile</span>
+                        <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>profile</span>
                     </Link>
 
-                    <Link to="/settings" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <Settings size={18} />
-                        <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>settings</span>
+                    <Link to="/settings" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">
+                        <Settings size={20} />
+                        <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>settings</span>
                     </Link>
+
+                    <button onClick={handleLogout} style={{ border: 'none', color: 'var(--text-dim)', fontSize: '10px', marginTop: '10px', opacity: 0.5 }}>logout</button>
                 </>
             ) : (
-                <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
-                    <button className="primary" style={{ padding: '8px 24px', fontSize: '12px', textTransform: 'lowercase' }}>sign in</button>
+                <Link to="/auth" onClick={() => setIsMenuOpen(false)} style={{ padding: '12px' }}>
+                    <button className="primary" style={{ padding: '8px', width: '40px', height: '40px', borderRadius: '50%', fontSize: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <UserIcon size={16} />
+                    </button>
                 </Link>
             )}
         </>
@@ -80,7 +80,7 @@ function Navbar({ user, setUser }) {
     return (
         <>
             <nav style={{
-                padding: '15px 20px',
+                padding: '12px 20px',
                 borderBottom: '1px solid var(--border)',
                 position: 'fixed',
                 top: 0,
@@ -98,79 +98,51 @@ function Navbar({ user, setUser }) {
                             </h2>
                         </Link>
                     </div>
-                    <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+                    <div style={{ flex: 1, display: 'flex', justifyContent: 'center', maxWidth: '500px' }}>
                         <UserSearch />
                     </div>
-
-
-                    <div className="mobile-hide" style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
-                        <NavLinks />
-                    </div>
+                    <div style={{ width: '100px' }} className="mobile-hide"></div>
                 </div>
             </nav>
 
-            {/* Mobile Bottom Navigation */}
-            <div className="mobile-show" style={{
+            {/* Vertical Sidebar - Right */}
+            <div className="sidebar-right" style={{
                 position: 'fixed',
-                bottom: 0,
-                left: 0,
-                width: '100%',
-                background: 'rgba(0,0,0,0.9)',
-                backdropFilter: 'blur(20px)',
-                borderTop: '1px solid var(--border)',
-                display: 'none',
-                justifyContent: 'space-around',
-                alignItems: 'center',
-                padding: '12px 10px',
-                zIndex: 1000,
-                paddingBottom: 'calc(12px + env(safe-area-inset-bottom))'
+                right: '24px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px',
+                zIndex: 1001,
+                padding: '12px 8px',
+                background: 'rgba(15, 15, 15, 0.4)',
+                backdropFilter: 'blur(25px)',
+                borderRadius: '50px',
+                border: '1px solid var(--border)',
+                boxShadow: '0 10px 40px rgba(0,0,0,0.6)',
+                animation: 'fadeIn 0.5s ease-out'
             }}>
-                <Link to="/" style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                    <Home size={22} />
-                </Link>
-
-                <Link to="/library" style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                    <Book size={22} />
-                </Link>
-
-                {user ? (
-                    <>
-                        <Link to="/feed" style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                            <Rss size={22} />
-                        </Link>
-
-                        <Link to={`/profile/${user.username}`} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                            <div style={{
-                                width: '24px',
-                                height: '24px',
-                                borderRadius: '50%',
-                                background: user.avatar ? 'none' : 'var(--surface-alt)',
-                                border: '1px solid var(--border)',
-                                overflow: 'hidden'
-                            }}>
-                                {user.avatar ? (
-                                    <img src={`http://localhost:5000${user.avatar}`} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                                ) : (
-                                    <UserIcon size={12} style={{ opacity: 0.5 }} />
-                                )}
-                            </div>
-                        </Link>
-
-                        <Link to="/settings" style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                            <Settings size={22} />
-                        </Link>
-                    </>
-                ) : (
-                    <Link to="/auth" style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                        <UserIcon size={22} />
-                    </Link>
-                )}
+                <NavLinks />
             </div>
 
             <style>{`
+                .nav-item:hover {
+                    color: #fff !important;
+                    transform: scale(1.1);
+                }
+                
                 @media (max-width: 768px) {
-                    .mobile-hide { display: none !important; }
-                    .mobile-show { display: flex !important; }
+                    .sidebar-right {
+                        right: 8px;
+                        padding: 8px 4px;
+                    }
+                    .nav-item {
+                        padding: 10px 6px !important;
+                    }
+                    .nav-item span {
+                        display: none;
+                    }
                 }
             `}</style>
         </>

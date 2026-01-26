@@ -22,20 +22,17 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/prompts')
 
 app.use((req, res, next) => {
     const origin = req.headers.origin;
+    const allowedOrigins = ['https://nanoprompts.space', 'https://www.nanoprompts.space', 'http://localhost:3000'];
 
-    // Echo the origin to allow all domains while supporting credentials
-    if (origin) {
+    if (allowedOrigins.includes(origin)) {
         res.setHeader('Access-Control-Allow-Origin', origin);
     }
 
-    // Essential for Vercel caching to avoid serving headers from one origin to another
     res.setHeader('Vary', 'Origin');
-
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
     res.setHeader('Access-Control-Allow-Headers', 'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version, Authorization');
 
-    // Handle Preflight (OPTIONS)
     if (req.method === 'OPTIONS') {
         return res.sendStatus(200);
     }

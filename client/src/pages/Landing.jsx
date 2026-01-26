@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, Key, Zap, Grid, Layers, ArrowRight, Wand2 } from 'lucide-react';
 import { examplePrompts } from '../data/examples';
+import Image from '../components/Image';
+
 
 function Landing() {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
@@ -32,7 +34,7 @@ function Landing() {
             <section style={{ height: 'auto', minHeight: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: '100px 20px' }}>
                 <div className="container fade-in">
                     <h1 className="ndot" style={{ fontSize: 'min(80px, 12vw)', lineHeight: '1.1', marginBottom: '24px', textTransform: 'lowercase' }}>
-                        the world's<br />best <span style={{ color: 'var(--accent)' }}>prompt presets</span>.
+                        the world's<br />best <span style={{ color: 'var(--accent)' }}>prompt library</span>.
                     </h1>
                     <p style={{ fontSize: 'min(20px, 5vw)', color: 'var(--text-dim)', maxWidth: '750px', margin: '0 auto 40px', textTransform: 'lowercase' }}>
                         unleash the full power of nano banana with our professional prompt presets.
@@ -92,7 +94,7 @@ function Landing() {
                     }}>
                         {examplePrompts.slice(0, 3).map((ex) => (
                             <div key={ex.id} className="glass" style={{ overflow: 'hidden' }}>
-                                <img src={ex.image} alt={ex.title} style={{ width: '100%', height: '300px', objectFit: 'cover' }} />
+                                <Image src={ex.image} alt={ex.title} style={{ width: '100%', height: '300px' }} />
                                 <div style={{ padding: '20px' }}>
                                     <p style={{ fontSize: '12px', color: 'var(--text-dim)', textTransform: 'lowercase' }}>{ex.title}</p>
                                 </div>

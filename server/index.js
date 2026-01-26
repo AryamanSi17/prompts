@@ -13,14 +13,15 @@ const PORT = process.env.PORT || 5000;
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/prompts')
     .then(() => {
         console.log('Connected to MongoDB');
-        // Ensure indexes are created/synced for high-performance searching
         mongoose.model('Prompt').syncIndexes();
     })
     .catch(err => console.error(err));
 
 const allowedOrigins = [
     'https://prompts-collect.vercel.app',
-    'https://nanoprompts.space'
+    'https://nanoprompts.space',
+    'http://localhost:3000',
+    'http://localhost:5000'
 ];
 
 app.use(cors({

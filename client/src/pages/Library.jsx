@@ -2,6 +2,8 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { Search, Sparkles, Book, CheckCircle, X } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { libraryPrompts } from '../data/libraryData';
+import Image from '../components/Image';
+
 
 function Library() {
     const [searchQuery, setSearchQuery] = useState('');
@@ -120,7 +122,8 @@ function Library() {
                         onClick={() => setSelectedPrompt(p)}
                     >
                         <div style={{ position: 'relative', height: '280px', overflow: 'hidden' }}>
-                            <img src={p.image} alt={p.title} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                            <Image src={p.image} alt={p.title} style={{ width: '100%', height: '100%' }} />
+
                             <div style={{
                                 position: 'absolute',
                                 top: '16px',
@@ -254,12 +257,13 @@ function Library() {
                         </button>
 
                         <div className="modal-image-container" style={{ flex: '1.2', background: '#000', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '300px' }}>
-                            <img
+                            <Image
                                 src={selectedPrompt.image}
                                 alt={selectedPrompt.title}
                                 style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                             />
                         </div>
+
 
                         <div className="modal-info-container" style={{ flex: '0.8', padding: '40px', overflowY: 'auto', background: 'rgba(255,255,255,0.02)' }}>
                             <div style={{ marginBottom: '32px' }}>

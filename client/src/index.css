@@ -191,3 +191,23 @@ textarea {
 .spin {
     animation: spin 2s linear infinite;
 }
+
+.skeleton {
+    background: linear-gradient(110deg,
+            var(--surface-alt) 30%,
+            rgba(255, 255, 255, 0.05) 45%,
+            var(--surface-alt) 60%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite linear;
+    border-radius: var(--radius);
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+
+    100% {
+        background-position: 200% 0;
+    }
+}

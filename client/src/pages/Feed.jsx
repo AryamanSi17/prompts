@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Upload, Heart, MessageCircle, User as UserIcon, Terminal, BookOpen, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import API, { API_BASE } from '../utils/api';
+import API, { API_BASE, getMediaUrl } from '../utils/api';
 
 import { useToast } from '../context/ToastContext';
 import Image from '../components/Image';
@@ -159,11 +159,11 @@ function Feed() {
                                 }}>
                                     {post.userId.avatar ? (
                                         <img
-                                            src={`${API_BASE}${post.userId.avatar}`}
-
+                                            src={getMediaUrl(post.userId.avatar)}
                                             alt={post.userId.username}
                                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                         />
+
                                     ) : (
                                         <UserIcon size={20} style={{ opacity: 0.5 }} />
                                     )}
@@ -181,17 +181,17 @@ function Feed() {
                             <div className="media-wrapper" style={{ width: '100%', background: '#000' }}>
                                 {post.type === 'photo' ? (
                                     <Image
-                                        src={`${API_BASE}${post.mediaUrl}`}
+                                        src={getMediaUrl(post.mediaUrl)}
                                         alt={post.caption}
 
                                         style={{ width: '100%', height: 'auto', maxHeight: '500px', objectFit: 'contain' }}
                                     />
                                 ) : (
                                     <video
-                                        src={`${API_BASE}${post.mediaUrl}`}
+                                        src={getMediaUrl(post.mediaUrl)}
                                         controls
                                         style={{ width: '100%', maxHeight: '500px', background: '#000' }}
-                                        poster={post.thumbnail ? `${API_BASE}${post.thumbnail}` : undefined}
+                                        poster={post.thumbnail ? getMediaUrl(post.thumbnail) : undefined}
                                     />
 
                                 )}

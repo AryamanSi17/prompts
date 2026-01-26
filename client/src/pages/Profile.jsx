@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { User as UserIcon, Grid, Settings } from 'lucide-react';
-import API from '../utils/api';
+import API, { getMediaUrl } from '../utils/api';
+
 import { useToast } from '../context/ToastContext';
 import Image from '../components/Image';
 
@@ -101,7 +102,7 @@ function Profile() {
                     }}>
                         {profile.avatar ? (
                             <img
-                                src={`http://localhost:5000${profile.avatar}`}
+                                src={getMediaUrl(profile.avatar)}
                                 alt={profile.username}
                                 style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                             />
@@ -260,7 +261,7 @@ function Profile() {
                         >
                             {post.type === 'photo' ? (
                                 <Image
-                                    src={`http://localhost:5000${post.mediaUrl}`}
+                                    src={getMediaUrl(post.mediaUrl)}
                                     alt={post.caption}
                                     style={{
                                         position: 'absolute',
@@ -273,8 +274,8 @@ function Profile() {
                                 />
                             ) : (
                                 <video
-                                    src={`http://localhost:5000${post.mediaUrl}`}
-                                    poster={post.thumbnail ? `http://localhost:5000${post.thumbnail}` : undefined}
+                                    src={getMediaUrl(post.mediaUrl)}
+                                    poster={post.thumbnail ? getMediaUrl(post.thumbnail) : undefined}
                                     style={{
                                         position: 'absolute',
                                         top: 0,

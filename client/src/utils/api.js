@@ -157,4 +157,12 @@ class API {
     };
 }
 
+export const getMediaUrl = (path) => {
+    if (!path) return '';
+    if (path.startsWith('http')) return path;
+    const base = API_BASE.replace(/\/$/, '');
+    return `${base}${path}`;
+};
+
 export default new API();
+

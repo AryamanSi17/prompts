@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { User as UserIcon, Camera, Save } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
 import { useNavigate } from 'react-router-dom';
-import API from '../utils/api';
+import API, { getMediaUrl } from '../utils/api';
+
 
 function Settings() {
     const [user, setUser] = useState(null);
@@ -119,10 +120,11 @@ function Settings() {
                         }}>
                             {avatar ? (
                                 <img
-                                    src={`http://localhost:5000${avatar}`}
+                                    src={getMediaUrl(avatar)}
                                     alt={user.username}
                                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                 />
+
                             ) : (
                                 <UserIcon size={48} style={{ opacity: 0.3 }} />
                             )}

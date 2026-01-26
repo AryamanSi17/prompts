@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Settings, Book, AlignLeft, User as UserIcon, Rss, Search } from 'lucide-react';
 
 import UserSearch from './UserSearch';
-import { API_BASE } from '../utils/api';
+import { API_BASE, getMediaUrl } from '../utils/api';
 
 function Navbar({ user, setUser }) {
     const navigate = useNavigate();
@@ -72,10 +72,11 @@ function Navbar({ user, setUser }) {
                         }}>
                             {user.avatar ? (
                                 <img
-                                    src={`${API_BASE}${user.avatar}`}
+                                    src={getMediaUrl(user.avatar)}
                                     alt={user.username}
                                     style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                 />
+
                             ) : (
                                 <UserIcon size={14} style={{ opacity: 0.5 }} />
                             )}

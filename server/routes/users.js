@@ -110,25 +110,28 @@ router.post('/avatar', authMiddleware, (req, res) => {
 
             // Delete old avatar if exists
             if (user.avatar) {
-                const oldAvatarPath = path.join(__dirname, '..', user.avatar);
-                deleteFile(oldAvatarPath);
+                // deleteFile helper now handles both local and S3 URLs
+                await deleteFile(user.avatar);
             }
 
-            // Update avatar
-            user.avatar = `/uploads/avatars/${req.file.filename}`;
+            // Determine new avatar URL (S3 vs local)
+            const avatarUrl = req.file.location || `/uploads/avatars/${req.file.filename}`;
+            user.avatar = avatarUrl;
             await user.save();
 
             res.json({ avatar: user.avatar });
         } catch (error) {
             // Clean up uploaded file on error
             if (req.file) {
-                deleteFile(req.file.path);
+                const cleanupPath = req.file.location || req.file.path;
+                await deleteFile(cleanupPath);
             }
             console.error('Update avatar error:', error);
             res.status(500).json({ error: 'Failed to update avatar' });
         }
     });
 });
+
 
 // Follow user
 router.post('/:userId/follow', authMiddleware, async (req, res) => {

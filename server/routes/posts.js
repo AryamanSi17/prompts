@@ -6,7 +6,7 @@ const Post = require('../models/Post');
 const Comment = require('../models/Comment');
 const User = require('../models/User');
 const { authMiddleware, optionalAuth } = require('../middleware/auth');
-const { uploadPost, deleteFile, thumbnailsDir } = require('../services/uploadService');
+const { uploadPost, deleteFile, thumbnailsDir, isS3, uploadFileToS3 } = require('../services/uploadService');
 const { compressVideo, generateThumbnail, getVideoDuration } = require('../services/videoService');
 
 // Create post
@@ -35,8 +35,20 @@ router.post('/', authMiddleware, (req, res) => {
                 originalSize: file.size
             };
 
+            // If S3 is enabled and it's a photo, upload it now
+            if (isS3 && !isVideo) {
+                const s3Url = await uploadFileToS3(file.path, `posts/${file.filename}`, file.mimetype);
+                if (s3Url) {
+                    postData.mediaUrl = s3Url;
+                    deleteFile(file.path); // Delete local file after S3 upload
+                }
+            }
 
-            // Handle video compression
+            // Create post first so we have the ID for async video processing updates
+            const post = new Post(postData);
+            await post.save();
+
+            // Handle video compression and S3 upload for videos
             if (isVideo) {
                 const compressedFilename = `compressed-${file.filename.replace(path.extname(file.filename), '.mp4')}`;
                 const compressedPath = path.join(path.dirname(file.path), compressedFilename);
@@ -45,14 +57,25 @@ router.post('/', authMiddleware, (req, res) => {
 
                 // Get video duration
                 const duration = await getVideoDuration(file.path);
-                postData.duration = Math.round(duration);
+                await Post.findByIdAndUpdate(post._id, { duration: Math.round(duration) });
 
                 // Start compression (async)
                 compressVideo(file.path, compressedPath)
                     .then(async (result) => {
+                        let finalMediaUrl = `/uploads/posts/${compressedFilename}`;
+
+                        // If S3, upload compressed video
+                        if (isS3) {
+                            const s3Url = await uploadFileToS3(compressedPath, `posts/${compressedFilename}`, 'video/mp4');
+                            if (s3Url) {
+                                finalMediaUrl = s3Url;
+                                deleteFile(compressedPath);
+                            }
+                        }
+
                         // Update post with compressed video
                         await Post.findByIdAndUpdate(post._id, {
-                            mediaUrl: `/uploads/posts/${compressedFilename}`,
+                            mediaUrl: finalMediaUrl,
                             isCompressed: true,
                             compressedSize: result.compressedSize
                         });
@@ -67,36 +90,40 @@ router.post('/', authMiddleware, (req, res) => {
                 // Generate thumbnail
                 try {
                     await generateThumbnail(file.path, thumbnailPath);
-                    postData.thumbnail = `/uploads/thumbnails/${thumbnailFilename}`;
+                    let finalThumbUrl = `/uploads/thumbnails/${thumbnailFilename}`;
+
+                    if (isS3) {
+                        const s3ThumbUrl = await uploadFileToS3(thumbnailPath, `thumbnails/${thumbnailFilename}`, 'image/jpeg');
+                        if (s3ThumbUrl) {
+                            finalThumbUrl = s3ThumbUrl;
+                            deleteFile(thumbnailPath);
+                        }
+                    }
+
+                    await Post.findByIdAndUpdate(post._id, { thumbnail: finalThumbUrl });
                 } catch (thumbErr) {
                     console.error('Thumbnail generation error:', thumbErr);
                 }
             }
 
-            // Create post
-            const post = new Post(postData);
-            await post.save();
-
             // Update user's post count
             await User.findByIdAndUpdate(req.userId, { $inc: { postsCount: 1 } });
 
-            // Populate user info
+            // Populate user info for the response
             await post.populate('userId', 'username displayName avatar');
 
             res.status(201).json({
-                message: isVideo ? 'Video uploaded. Compression in progress...' : 'Photo uploaded successfully',
+                message: isVideo ? 'Video uploaded. Processing...' : 'Photo uploaded successfully',
                 post
             });
         } catch (error) {
-            // Clean up uploaded file on error
-            if (req.file) {
-                deleteFile(req.file.path);
-            }
+            if (req.file) deleteFile(req.file.path);
             console.error('Create post error:', error);
             res.status(500).json({ error: 'Failed to create post' });
         }
     });
 });
+
 
 // Get feed - Global discovery feed (all posts from all users)
 router.get('/feed', authMiddleware, async (req, res) => {

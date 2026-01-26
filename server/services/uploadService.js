@@ -1,6 +1,20 @@
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { S3Client, PutObjectCommand, DeleteObjectCommand } = require('@aws-sdk/client-s3');
+const multerS3 = require('multer-s3');
+
+// S3 Configuration
+const s3Config = {
+    region: process.env.AWS_REGION,
+    credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    }
+};
+
+const s3 = process.env.AWS_ACCESS_KEY_ID ? new S3Client(s3Config) : null;
+const bucketName = process.env.AWS_S3_BUCKET;
 
 // Ensure upload directories exist
 const uploadDir = process.env.UPLOAD_DIR || './uploads';
@@ -8,7 +22,7 @@ const postsDir = path.join(uploadDir, 'posts');
 const avatarsDir = path.join(uploadDir, 'avatars');
 const thumbnailsDir = path.join(uploadDir, 'thumbnails');
 
-// Ensure upload directories exist (skip recursive creation on Vercel startup as it's read-only)
+// Ensure local upload directories exist (skip recursive creation on Vercel startup as it's read-only)
 if (!process.env.VERCEL) {
     [uploadDir, postsDir, avatarsDir, thumbnailsDir].forEach(dir => {
         try {
@@ -21,8 +35,7 @@ if (!process.env.VERCEL) {
     });
 }
 
-
-// Storage configuration for posts
+// Storage configuration for posts (Always local initially for processing/compression)
 const postStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, postsDir);
@@ -34,17 +47,33 @@ const postStorage = multer.diskStorage({
     }
 });
 
+
 // Storage configuration for avatars
-const avatarStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, avatarsDir);
-    },
-    filename: (req, file, cb) => {
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname);
-        cb(null, `avatar-${uniqueSuffix}${ext}`);
-    }
-});
+let avatarStorage;
+if (s3) {
+    avatarStorage = multerS3({
+        s3: s3,
+        bucket: bucketName,
+        acl: 'public-read',
+        contentType: multerS3.AUTO_CONTENT_TYPE,
+        key: (req, file, cb) => {
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+            const ext = path.extname(file.originalname);
+            cb(null, `avatars/avatar-${uniqueSuffix}${ext}`);
+        }
+    });
+} else {
+    avatarStorage = multer.diskStorage({
+        destination: (req, file, cb) => {
+            cb(null, avatarsDir);
+        },
+        filename: (req, file, cb) => {
+            const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+            const ext = path.extname(file.originalname);
+            cb(null, `avatar-${uniqueSuffix}${ext}`);
+        }
+    });
+}
 
 // File filter for images
 const imageFilter = (req, file, cb) => {
@@ -89,17 +118,60 @@ const uploadAvatar = multer({
     }
 }).single('avatar');
 
-// Helper to delete file
-const deleteFile = (filePath) => {
+// Helper to delete file (local or S3)
+const deleteFile = async (filePath) => {
+    if (!filePath) return false;
+
+    // If it's an S3 URL
+    if (filePath.startsWith('http') && s3 && filePath.includes(bucketName)) {
+        try {
+            const key = filePath.split(`${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/`)[1] ||
+                filePath.split(`${bucketName}/`)[1];
+            if (!key) return false;
+
+            const command = new DeleteObjectCommand({
+                Bucket: bucketName,
+                Key: key
+            });
+            await s3.send(command);
+            return true;
+        } catch (error) {
+            console.error('Error deleting from S3:', error);
+            return false;
+        }
+    }
+
+    // Local file
     try {
-        if (fs.existsSync(filePath)) {
-            fs.unlinkSync(filePath);
+        const fullPath = path.isAbsolute(filePath) ? filePath : path.join(process.cwd(), filePath);
+        if (fs.existsSync(fullPath)) {
+            fs.unlinkSync(fullPath);
             return true;
         }
         return false;
     } catch (error) {
-        console.error('Error deleting file:', error);
+        console.error('Error deleting local file:', error);
         return false;
+    }
+};
+
+// Helper for manual S3 upload (used for compressed videos and thumbnails)
+const uploadFileToS3 = async (localPath, s3Key, contentType) => {
+    if (!s3) return null;
+    try {
+        const fileStream = fs.createReadStream(localPath);
+        const command = new PutObjectCommand({
+            Bucket: bucketName,
+            Key: s3Key,
+            Body: fileStream,
+            ContentType: contentType,
+            ACL: 'public-read'
+        });
+        await s3.send(command);
+        return `https://${bucketName}.s3.${process.env.AWS_REGION}.amazonaws.com/${s3Key}`;
+    } catch (error) {
+        console.error('Manual S3 upload error:', error);
+        return null;
     }
 };
 
@@ -107,7 +179,10 @@ module.exports = {
     uploadPost,
     uploadAvatar,
     deleteFile,
+    uploadFileToS3,
+    isS3: !!s3,
     postsDir,
     avatarsDir,
     thumbnailsDir
 };
+

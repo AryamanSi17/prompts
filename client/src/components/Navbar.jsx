@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Settings, Book, AlignLeft, User as UserIcon, Rss } from 'lucide-react';
+import { Settings, Book, AlignLeft, User as UserIcon, Rss, Search } from 'lucide-react';
+
 import UserSearch from './UserSearch';
 import { API_BASE } from '../utils/api';
 
 function Navbar({ user, setUser }) {
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [showMobileSearch, setShowMobileSearch] = useState(false);
+
 
     const handleLogout = () => {
         localStorage.removeItem('user');
@@ -18,6 +21,26 @@ function Navbar({ user, setUser }) {
 
     const NavLinks = () => (
         <>
+            <button
+                onClick={() => setShowMobileSearch(true)}
+                className="nav-item mobile-search-btn"
+                style={{
+                    color: 'var(--text-dim)',
+                    background: 'transparent',
+                    border: 'none',
+                    display: 'none',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '12px',
+                    transition: 'all 0.3s',
+                    cursor: 'pointer'
+                }}
+            >
+                <Search size={20} />
+                <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>search</span>
+            </button>
+
             <Link to="/library" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">
                 <Book size={20} />
                 <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>library</span>
@@ -130,6 +153,14 @@ function Navbar({ user, setUser }) {
                 </div>
             </div>
 
+            {/* Mobile Search Modal */}
+            {showMobileSearch && (
+                <UserSearch
+                    isMobileModal={true}
+                    onClose={() => setShowMobileSearch(false)}
+                />
+            )}
+
             <style>{`
                 .nav-container-fixed {
                     right: 24px;
@@ -147,6 +178,12 @@ function Navbar({ user, setUser }) {
                 }
                 
                 @media (max-width: 768px) {
+                    .desktop-search {
+                        display: none !important;
+                    }
+                    .mobile-search-btn {
+                        display: flex !important;
+                    }
                     .nav-container-fixed {
                         right: 0;
                         left: 0;
@@ -180,3 +217,4 @@ function Navbar({ user, setUser }) {
 }
 
 export default Navbar;
+

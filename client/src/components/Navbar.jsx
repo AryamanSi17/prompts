@@ -63,6 +63,11 @@ function Navbar({ user, setUser }) {
                         </div>
                         <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>profile</span>
                     </Link>
+
+                    <Link to="/settings" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <Settings size={18} />
+                        <span style={{ fontSize: '14px', fontWeight: 500, textTransform: 'lowercase' }}>settings</span>
+                    </Link>
                 </>
             ) : (
                 <Link to="/auth" onClick={() => setIsMenuOpen(false)}>
@@ -146,6 +151,10 @@ function Navbar({ user, setUser }) {
                                     <UserIcon size={12} style={{ opacity: 0.5 }} />
                                 )}
                             </div>
+                        </Link>
+
+                        <Link to="/settings" style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                            <Settings size={22} />
                         </Link>
                     </>
                 ) : (

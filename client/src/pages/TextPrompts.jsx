@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Search, Copy, Check, Loader2 } from 'lucide-react';
+import { useToast } from '../context/ToastContext';
 import API, { API_BASE } from '../utils/api';
 
 function TextPrompts() {

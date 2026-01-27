@@ -7,7 +7,10 @@ const uploadService = require('../services/uploadService');
 router.get('/search', userController.searchUsers);
 router.get('/:username', auth.optionalAuth, userController.getProfile);
 router.put('/profile', auth, uploadService.uploadAvatar, userController.updateProfile);
+router.post('/avatar', auth, uploadService.uploadAvatar, userController.updateProfile);
 router.post('/:id/follow', auth, userController.followUser);
-router.delete('/:id/follow', auth, userController.unfollowUser);
+router.post('/:id/unfollow', auth, userController.unfollowUser);
+router.get('/:id/followers', userController.getFollowers);
+router.get('/:id/following', userController.getFollowing);
 
 module.exports = router;

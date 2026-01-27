@@ -149,3 +149,53 @@ exports.unfollowUser = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+exports.getFollowers = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { page = 1, limit = 20 } = req.query;
+
+        const followers = await Follow.find({ following: id })
+            .sort({ createdAt: -1 })
+            .skip((parseInt(page) - 1) * parseInt(limit))
+            .limit(parseInt(limit))
+            .populate('follower', 'username displayName avatar bio')
+            .lean();
+
+        const total = await Follow.countDocuments({ following: id });
+
+        res.json({
+            users: followers.map(f => f.follower),
+            total,
+            page: parseInt(page),
+            pages: Math.ceil(total / parseInt(limit))
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};
+
+exports.getFollowing = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { page = 1, limit = 20 } = req.query;
+
+        const following = await Follow.find({ follower: id })
+            .sort({ createdAt: -1 })
+            .skip((parseInt(page) - 1) * parseInt(limit))
+            .limit(parseInt(limit))
+            .populate('following', 'username displayName avatar bio')
+            .lean();
+
+        const total = await Follow.countDocuments({ follower: id });
+
+        res.json({
+            users: following.map(f => f.following),
+            total,
+            page: parseInt(page),
+            pages: Math.ceil(total / parseInt(limit))
+        });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+};

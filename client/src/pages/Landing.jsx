@@ -5,7 +5,7 @@ import { examplePrompts } from '../data/examples';
 import Image from '../components/Image';
 
 
-function Landing() {
+function Landing({ user }) {
     const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
 
     useEffect(() => {
@@ -46,9 +46,14 @@ function Landing() {
                     <h1 className="ndot" style={{ fontSize: 'min(80px, 12vw)', lineHeight: '1.1', marginBottom: '24px', textTransform: 'lowercase' }}>
                         the world's<br />best <span style={{ color: 'var(--accent)' }}>prompt library</span>.
                     </h1>
-                    <p style={{ fontSize: 'min(20px, 5vw)', color: 'var(--text-dim)', maxWidth: '750px', margin: '0 auto 40px', textTransform: 'lowercase' }}>
-                        unleash the full power of nano banana with our professional prompt presets.
-                        the ultimate engine library for high-performance AI generation.
+                    <p style={{ fontSize: 'min(20px, 5vw)', color: 'var(--text-dim)', maxWidth: '750px', margin: '0 auto 20px', textTransform: 'lowercase' }}>
+                        built for people who actually use ai.
+                    </p>
+                    <p style={{ fontSize: 'min(16px, 4vw)', color: 'var(--text-dim)', maxWidth: '650px', margin: '0 auto 40px', textTransform: 'lowercase', lineHeight: '1.6' }}>
+                        nano prompts is a curated library of high-performance prompt presets designed for nano banana, gemini nano, and modern ai workflows.
+                    </p>
+                    <p style={{ fontSize: 'min(18px, 4.5vw)', color: '#fff', maxWidth: '600px', margin: '0 auto 40px', textTransform: 'lowercase', fontWeight: '600' }}>
+                        stop prompt guessing. start generating.
                     </p>
                     <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
                         <Link to="/library">
@@ -56,13 +61,20 @@ function Landing() {
                                 explore presets <ArrowRight size={18} />
                             </button>
                         </Link>
+                        {!user && (
+                            <Link to="/auth" state={{ mode: 'register' }}>
+                                <button style={{ padding: '16px 40px', display: 'flex', alignItems: 'center', gap: '12px', textTransform: 'lowercase', background: 'transparent', border: '1px solid var(--border)', color: '#fff' }}>
+                                    sign up <Sparkles size={18} />
+                                </button>
+                            </Link>
+                        )}
                     </div>
                 </div>
             </section>
 
             <section style={{ padding: '80px 0' }}>
                 <div className="container">
-                    <h2 className="ndot" style={{ fontSize: '40px', marginBottom: '60px', textAlign: 'center', textTransform: 'lowercase' }}>advanced features.</h2>
+                    <h2 className="ndot" style={{ fontSize: '40px', marginBottom: '60px', textAlign: 'center', textTransform: 'lowercase' }}>what you get</h2>
                     <div className="features-grid" style={{
                         display: 'grid',
                         gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
@@ -72,21 +84,21 @@ function Landing() {
                             <Key size={32} style={{ marginBottom: '20px' }} />
                             <h3 style={{ marginBottom: '16px', textTransform: 'lowercase' }}>nano prompt presets</h3>
                             <p style={{ color: 'var(--text-dim)', fontSize: '14px', lineHeight: '1.6', textTransform: 'lowercase' }}>
-                                pre-architected prompt presets for fast, consistent, and high-quality results in any ai environment.
+                                pre-architected, production-ready prompts for fast, consistent, and repeatable results across text and image generation.
                             </p>
                         </div>
                         <div className="glass" style={{ padding: '40px' }}>
                             <Grid size={32} style={{ marginBottom: '20px' }} />
                             <h3 style={{ marginBottom: '16px', textTransform: 'lowercase' }}>engine architectures</h3>
                             <p style={{ color: 'var(--text-dim)', fontSize: '14px', lineHeight: '1.6', textTransform: 'lowercase' }}>
-                                thousands of curated engine prompts specifically for nano banana pro and google dev clusters.
+                                thousands of curated prompts optimized for nano banana pro and google dev clusters, structured for real-world use.
                             </p>
                         </div>
                         <div className="glass" style={{ padding: '40px' }}>
                             <Zap size={32} style={{ marginBottom: '20px' }} />
-                            <h3 style={{ marginBottom: '16px', textTransform: 'lowercase' }}>pro generation</h3>
+                            <h3 style={{ marginBottom: '16px', textTransform: 'lowercase' }}>pro-grade generation</h3>
                             <p style={{ color: 'var(--text-dim)', fontSize: '14px', lineHeight: '1.6', textTransform: 'lowercase' }}>
-                                the most diverse prompt collection for generating high-definition assets and cinematic visual prompts.
+                                high-quality prompts for characters, styles, layouts, branding, and creative systems — built to scale.
                             </p>
                         </div>
                     </div>
@@ -95,8 +107,20 @@ function Landing() {
 
             <section style={{ padding: '80px 0', background: 'rgba(255,255,255,0.02)' }}>
                 <div className="container">
-                    <h2 className="ndot" style={{ fontSize: '40px', marginBottom: '20px', textAlign: 'center', textTransform: 'lowercase' }}>preset showcase.</h2>
-                    <p style={{ color: 'var(--text-dim)', textAlign: 'center', marginBottom: '60px', textTransform: 'lowercase' }}>trending architecture models</p>
+                    <h2 className="ndot" style={{ fontSize: '40px', marginBottom: '20px', textAlign: 'center', textTransform: 'lowercase' }}>the library</h2>
+                    <p style={{ color: 'var(--text-dim)', textAlign: 'center', marginBottom: '16px', textTransform: 'lowercase', fontSize: '16px', maxWidth: '700px', margin: '0 auto 60px', lineHeight: '1.8' }}>
+                        a shared prompt space where creators build in public.<br />
+                        browse real prompts. see how others are using ai.<br />
+                        adapt, remix, and move faster.<br /><br />
+                        <span style={{ color: '#fff', fontWeight: '600' }}>this is a living library, not a static list.</span>
+                    </p>
+                </div>
+            </section>
+
+            <section style={{ padding: '80px 0' }}>
+                <div className="container">
+                    <h2 className="ndot" style={{ fontSize: '40px', marginBottom: '20px', textAlign: 'center', textTransform: 'lowercase' }}>preset showcase</h2>
+                    <p style={{ color: 'var(--text-dim)', textAlign: 'center', marginBottom: '60px', textTransform: 'lowercase' }}>trending architectures</p>
                     <div style={{
                         display: 'grid',
                         gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
@@ -111,6 +135,9 @@ function Landing() {
                             </div>
                         ))}
                     </div>
+                    <p style={{ color: 'var(--text-dim)', textAlign: 'center', marginTop: '40px', fontSize: '12px', textTransform: 'lowercase' }}>
+                        more styles added continuously.
+                    </p>
                 </div>
             </section>
 
@@ -118,9 +145,7 @@ function Landing() {
             <section style={{ padding: '60px 0', borderTop: '1px solid var(--border)', background: 'rgba(0,0,0,0.5)' }}>
                 <div className="container" style={{ textAlign: 'center' }}>
                     <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.2)', maxWidth: '800px', margin: '0 auto', lineHeight: '2' }}>
-                        popular keywords: prompt presets, nano prompts library, best ai prompts for creators,
-                        google gemini nano templates, banana pro prompt engineering, architectural prompts for development,
-                        high performance ai generation presets, 10k prompt database, free pro prompts, character prompt presets.
+                        popular keywords: prompt presets, nano prompts library, best ai prompts for creators, gemini nano templates, banana pro prompt engineering, high-performance ai prompt systems, 10k+ prompt database, character and style presets.
                     </p>
                 </div>
             </section>

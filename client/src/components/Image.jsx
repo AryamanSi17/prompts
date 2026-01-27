@@ -44,8 +44,9 @@ const Image = ({ src, alt, style, className, loading = "lazy" }) => {
                     setIsLoaded(true);
                 }}
                 style={{
-                    width: '100%',
-                    height: (style?.objectFit === 'contain' || style?.height === 'auto') ? 'auto' : '100%',
+                    width: style?.width || '100%',
+                    height: style?.height || ((style?.objectFit === 'contain' || style?.height === 'auto') ? 'auto' : '100%'),
+                    maxWidth: '100%',
                     objectFit: style?.objectFit || 'cover',
                     opacity: isLoaded && !error ? 1 : 0,
                     transition: 'opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1)',

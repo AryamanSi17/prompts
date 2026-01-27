@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { User as UserIcon, Grid, Settings } from 'lucide-react';
 import API, { getMediaUrl } from '../utils/api';
@@ -15,6 +15,7 @@ function Profile() {
     const [loading, setLoading] = useState(true);
     const [following, setFollowing] = useState(false);
     const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const followTimeoutRef = useRef(null);
 
     useEffect(() => {
         loadProfile();
@@ -45,22 +46,37 @@ function Profile() {
         }
     };
 
-    const handleFollow = async () => {
-        try {
-            if (following) {
-                await API.users.unfollow(profile._id);
-                setFollowing(false);
-                setProfile({ ...profile, followersCount: profile.followersCount - 1 });
-                addToast('Unfollowed', 'success');
-            } else {
-                await API.users.follow(profile._id);
-                setFollowing(true);
-                setProfile({ ...profile, followersCount: profile.followersCount + 1 });
-                addToast('Following', 'success');
-            }
-        } catch (err) {
-            addToast(err.message, 'error');
+    const handleFollow = () => {
+        if (!profile) return;
+
+        // Toggle UI state immediately
+        const newFollowingState = !following;
+        setFollowing(newFollowingState);
+        setProfile(prev => ({
+            ...prev,
+            followersCount: newFollowingState ? (prev.followersCount + 1) : (prev.followersCount - 1)
+        }));
+
+        // Clear existing sync timeout
+        if (followTimeoutRef.current) {
+            clearTimeout(followTimeoutRef.current);
         }
+
+        // Queue the update (5 seconds delay)
+        followTimeoutRef.current = setTimeout(async () => {
+            try {
+                if (newFollowingState) {
+                    await API.users.follow(profile._id);
+                    addToast('Followed', 'success');
+                } else {
+                    await API.users.unfollow(profile._id);
+                    addToast('Unfollowed', 'success');
+                }
+            } catch (err) {
+                addToast('Sync failed: ' + err.message, 'error');
+                // Optional: Revert UI state on error
+            }
+        }, 5000);
     };
 
     if (!profile) {

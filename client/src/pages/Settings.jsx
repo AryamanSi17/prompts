@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import API, { getMediaUrl } from '../utils/api';
 
 
-function Settings() {
+function Settings({ setUser: setGlobalUser }) {
     const [user, setUser] = useState(null);
     const [displayName, setDisplayName] = useState('');
     const [bio, setBio] = useState('');
@@ -78,6 +78,7 @@ function Settings() {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         API.setToken(null);
+        setGlobalUser(null);
         navigate('/auth');
         addToast('Logged out successfully', 'success');
     };

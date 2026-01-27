@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useToast } from '../context/ToastContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import API from '../utils/api';
 
 function Auth({ setUser }) {
     const { addToast } = useToast();
     const navigate = useNavigate();
-    const [isLogin, setIsLogin] = useState(true);
+    const location = useLocation();
+    const [isLogin, setIsLogin] = useState(location.state?.mode !== 'register');
     const [step, setStep] = useState('auth');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');

@@ -40,12 +40,12 @@ function App() {
                     <Navbar user={user} setUser={setUser} />
                     <div style={{ flex: 1 }}>
                         <Routes>
-                            <Route path="/" element={<Landing />} />
+                            <Route path="/" element={<Landing user={user} />} />
                             <Route path="/auth" element={!user ? <Auth setUser={setUser} /> : <Navigate to="/feed" />} />
                             <Route path="/feed" element={user ? <Feed /> : <Navigate to="/auth" />} />
                             <Route path="/profile/:username" element={<Profile />} />
                             <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/auth" />} />
-                            <Route path="/settings" element={user ? <Settings /> : <Navigate to="/auth" />} />
+                            <Route path="/settings" element={user ? <Settings setUser={setUser} /> : <Navigate to="/auth" />} />
                             <Route path="/library" element={<Library />} />
                             <Route path="/text-prompts" element={<TextPrompts />} />
                             <Route path="/builder" element={<PromptBuilder />} />

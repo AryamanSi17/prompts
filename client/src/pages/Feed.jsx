@@ -70,7 +70,7 @@ function Feed() {
 
 
     return (
-        <main className="container" style={{ padding: '80px 20px', maxWidth: '700px', paddingBottom: '100px' }}>
+        <main className="container" style={{ padding: '80px 20px', maxWidth: '1000px', paddingBottom: '100px' }}>
             <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
@@ -166,45 +166,51 @@ function Feed() {
                                 </div>
                             </Link>
 
-                            <div className="media-wrapper" style={{ width: '100%', background: '#000' }}>
-                                {post.type === 'photo' ? (
-                                    <Image
-                                        src={getMediaUrl(post.mediaUrl)}
-                                        alt={post.caption}
-
-                                        style={{ width: '100%', height: 'auto', maxHeight: '500px', objectFit: 'contain' }}
-                                    />
-                                ) : (
-                                    <video
-                                        src={getMediaUrl(post.mediaUrl)}
-                                        controls
-                                        style={{ width: '100%', maxHeight: '500px', background: '#000' }}
-                                        poster={post.thumbnail ? getMediaUrl(post.thumbnail) : undefined}
-                                    />
-
+                            <div className="post-content-layout">
+                                {(post.prompt || post.guide) && (
+                                    <div className="prompt-aside">
+                                        {post.prompt && (
+                                            <div className="prompt-box">
+                                                <div className="box-label">
+                                                    <Terminal size={12} />
+                                                    prompt
+                                                </div>
+                                                <p className="box-text mono">{post.prompt}</p>
+                                            </div>
+                                        )}
+                                        {post.guide && (
+                                            <div className="prompt-box">
+                                                <div className="box-label">
+                                                    <BookOpen size={12} />
+                                                    guide
+                                                </div>
+                                                <p className="box-text">{post.guide}</p>
+                                            </div>
+                                        )}
+                                    </div>
                                 )}
+
+                                <div className="media-wrapper">
+                                    {post.type === 'photo' ? (
+                                        <Image
+                                            src={getMediaUrl(post.mediaUrl)}
+                                            alt={post.caption}
+                                            style={{ width: 'auto', height: 'auto', maxHeight: '65vh', objectFit: 'contain', margin: '0 auto' }}
+                                        />
+                                    ) : (
+                                        <video
+                                            src={getMediaUrl(post.mediaUrl)}
+                                            controls
+                                            style={{ width: '100%', maxHeight: '65vh', background: '#000' }}
+                                            poster={post.thumbnail ? getMediaUrl(post.thumbnail) : undefined}
+                                        />
+                                    )}
+                                </div>
                             </div>
 
-                            <div style={{ padding: '16px' }}>
-                                <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
-                                    <button
-                                        style={{
-                                            background: 'none',
-                                            border: 'none',
-                                            padding: '8px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '6px',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        <MessageCircle size={20} />
-                                        <span style={{ fontSize: '14px' }}>{post.commentsCount || 0}</span>
-                                    </button>
-                                </div>
-
+                            <div style={{ padding: '16px', borderTop: '1px solid var(--border)' }}>
                                 {post.caption && (
-                                    <p style={{ fontSize: '14px', lineHeight: '1.5', marginBottom: '12px' }}>
+                                    <p style={{ fontSize: '14px', lineHeight: '1.5' }}>
                                         <Link
                                             to={`/profile/${post.userId.username}`}
                                             style={{ fontWeight: '600', textDecoration: 'none', color: 'inherit' }}
@@ -213,29 +219,6 @@ function Feed() {
                                         </Link>{' '}
                                         {post.caption}
                                     </p>
-                                )}
-
-                                {(post.prompt || post.guide) && (
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '16px', borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
-                                        {post.prompt && (
-                                            <div style={{ background: 'rgba(255,255,255,0.03)', padding: '12px', borderRadius: '8px' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-dim)', fontSize: '11px', marginBottom: '6px', textTransform: 'lowercase' }}>
-                                                    <Terminal size={12} />
-                                                    prompt
-                                                </div>
-                                                <p style={{ fontSize: '13px', fontFamily: 'var(--font-mono)', lineHeight: '1.4' }}>{post.prompt}</p>
-                                            </div>
-                                        )}
-                                        {post.guide && (
-                                            <div style={{ background: 'rgba(255,255,255,0.03)', padding: '12px', borderRadius: '8px' }}>
-                                                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--text-dim)', fontSize: '11px', marginBottom: '6px', textTransform: 'lowercase' }}>
-                                                    <BookOpen size={12} />
-                                                    guide
-                                                </div>
-                                                <p style={{ fontSize: '13px', lineHeight: '1.5' }}>{post.guide}</p>
-                                            </div>
-                                        )}
-                                    </div>
                                 )}
                             </div>
                         </div>
@@ -281,9 +264,82 @@ function Feed() {
             }} />}
 
             <style>{`
+                .post-content-layout {
+                    display: flex;
+                    flex-direction: column;
+                }
+                .prompt-aside {
+                    padding: 20px;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                    justify-content: center;
+                }
+                .media-wrapper {
+                    width: 100%;
+                    background: #000;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    overflow: hidden;
+                }
+                .prompt-box {
+                    background: rgba(255,255,255,0.03);
+                    padding: 12px;
+                    border-radius: 8px;
+                }
+                .box-label {
+                    display: flex;
+                    align-items: center;
+                    gap: 6px;
+                    color: var(--text-dim);
+                    fontSize: 11px;
+                    margin-bottom: 6px;
+                    text-transform: lowercase;
+                }
+                .box-text {
+                    font-size: 13px;
+                    line-height: 1.4;
+                }
+                .box-text.mono {
+                    font-family: var(--font-mono);
+                }
+
+                @media (min-width: 769px) {
+                    .post-content-layout {
+                        flex-direction: row !important;
+                        align-items: center;
+                        min-height: 400px;
+                    }
+                    .prompt-aside {
+                        flex: 1;
+                        padding: 40px;
+                        border-right: 1px solid var(--border);
+                        max-width: 450px;
+                        text-align: left;
+                    }
+                    .media-wrapper {
+                        flex: 1.2;
+                    }
+                    .media-wrapper img {
+                        max-width: 100% !important;
+                        height: auto !important;
+                        width: auto !important;
+                        max-height: 65vh !important;
+                    }
+                }
                 @media (max-width: 768px) {
                     .media-wrapper img, .media-wrapper video {
                         max-height: 48vh !important;
+                        width: 100% !important;
+                        height: auto !important;
+                    }
+                    .prompt-aside {
+                        order: 2;
+                        border-bottom: 1px solid var(--border);
+                    }
+                    .media-wrapper {
+                        order: 1;
                     }
                 }
             `}</style>

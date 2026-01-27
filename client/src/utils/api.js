@@ -1,4 +1,6 @@
-export const API_BASE = import.meta.env.VITE_API_BASE_URL || '';
+// Clean API_BASE to always be the root URL without trailing /api or slashes
+const rawBase = import.meta.env.VITE_API_BASE_URL || '';
+export const API_BASE = rawBase.replace(/\/api$/, '').replace(/\/$/, '');
 
 
 class API {

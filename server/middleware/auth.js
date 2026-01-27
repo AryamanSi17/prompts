@@ -9,7 +9,7 @@ const authMiddleware = async (req, res, next) => {
             return res.status(401).json({ error: 'No authentication token' });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'nanoprompts_secret_fallback_123');
         const user = await User.findById(decoded.userId).select('-password -otp -otpExpires');
 
         if (!user) {
@@ -28,7 +28,7 @@ const optionalAuth = async (req, res, next) => {
         const token = req.header('Authorization')?.replace('Bearer ', '');
 
         if (token) {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const decoded = jwt.verify(token, process.env.JWT_SECRET || 'nanoprompts_secret_fallback_123');
             const user = await User.findById(decoded.userId).select('-password -otp -otpExpires');
 
             if (user) {

@@ -96,7 +96,7 @@ exports.verifyOtp = async (req, res) => {
         user.otpExpires = undefined;
         await user.save();
 
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'nanoprompts_secret_fallback_123', { expiresIn: '30d' });
 
         res.json({
             token,
@@ -131,7 +131,7 @@ exports.login = async (req, res) => {
             return res.status(403).json({ error: 'Email not verified' });
         }
 
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '30d' });
+        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET || 'nanoprompts_secret_fallback_123', { expiresIn: '30d' });
 
         res.json({
             token,

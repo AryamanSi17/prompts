@@ -8,7 +8,6 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// 1. DATABASE CONNECTION (Top level, non-blocking but optimized)
 const MONGODB_URI = process.env.MONGODB_URI;
 let isConnected = false;
 
@@ -18,9 +17,9 @@ const connectDB = async () => {
     try {
         mongoose.set('strictQuery', false);
         const db = await mongoose.connect(MONGODB_URI || 'mongodb://localhost:27017/prompts', {
-            serverSelectionTimeoutMS: 10000, // 10s to find the server
+            serverSelectionTimeoutMS: 10000,
             socketTimeoutMS: 45000,
-            maxPoolSize: 5, // Small pool for serverless
+            maxPoolSize: 5,
         });
         isConnected = db.connections[0].readyState === 1;
         console.log('MongoDB Connected');
@@ -29,10 +28,8 @@ const connectDB = async () => {
     }
 };
 
-// Start connecting immediately
 connectDB();
 
-// 2. HELP DEBUG VERCEL CRASHES
 process.on('uncaughtException', (err) => {
     console.error('FATAL ERROR: Uncaught Exception', err);
 });
@@ -41,11 +38,10 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error('FATAL ERROR: Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-// 3. MIDDLEWARE
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Ensure DB is connected before processing requests
+
 app.use(async (req, res, next) => {
     if (mongoose.connection.readyState !== 1) {
         await connectDB();
@@ -53,7 +49,6 @@ app.use(async (req, res, next) => {
     next();
 });
 
-// Manual CORS Middleware
 app.use((req, res, next) => {
     const origin = req.headers.origin;
     const allowedOrigins = ['https://nanoprompts.space', 'https://www.nanoprompts.space', 'http://localhost:3000'];

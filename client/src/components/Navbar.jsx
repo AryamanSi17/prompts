@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Settings, Book, AlignLeft, User as UserIcon, Rss, Search } from 'lucide-react';
+import { Settings, Book, AlignLeft, User as UserIcon, Rss, Search, Sparkles } from 'lucide-react';
 
 import UserSearch from './UserSearch';
 import { API_BASE, getMediaUrl } from '../utils/api';
@@ -43,6 +43,11 @@ function Navbar({ user, setUser }) {
             <Link to="/library" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">
                 <Book size={20} />
                 <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>library</span>
+            </Link>
+
+            <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">
+                <Sparkles size={20} />
+                <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>playground</span>
             </Link>
 
             <Link to="/text-prompts" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">

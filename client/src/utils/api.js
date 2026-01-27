@@ -1,11 +1,9 @@
-// Clean API_BASE to always be the root URL without trailing /api or slashes
 const rawBase = import.meta.env.VITE_API_BASE_URL || '';
 export const API_BASE = rawBase.replace(/\/api$/, '').replace(/\/$/, '');
 
 
 class API {
     constructor() {
-        // Remove trailing slashes and ensure it starts with / only if it's a relative path
         let base = (API_BASE || '').replace(/\/$/, '');
         this.baseURL = base.endsWith('/api') ? base : `${base}/api`;
 

@@ -428,7 +428,7 @@ function UploadModal({ onClose, onSuccess }) {
                     }}>
                         <Upload size={48} style={{ opacity: 0.3, marginBottom: '16px' }} />
                         <p style={{ color: 'var(--text-dim)', textTransform: 'lowercase' }}>
-                            upload AI video or result
+                            upload AI photo
                         </p>
                         <input
                             type="file"

@@ -41,7 +41,6 @@ process.on('unhandledRejection', (reason, promise) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 app.use(async (req, res, next) => {
     if (mongoose.connection.readyState !== 1) {
         await connectDB();
@@ -68,7 +67,6 @@ app.use((req, res, next) => {
     next();
 });
 
-// 4. ROUTES
 app.get('/', (req, res) => {
     res.json({
         message: 'nano prompts API',
@@ -80,18 +78,15 @@ app.get('/', (req, res) => {
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/prompts', require('./routes/prompts'));
 app.use('/api/posts', require('./routes/posts'));
 app.use('/api/users', require('./routes/users'));
 
-// Health check
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', db: mongoose.connection.readyState });
 });
 
-// 5. GLOBAL ERROR HANDLER
 app.use((err, req, res, next) => {
     console.error('SERVER ERROR:', err);
     res.status(err.status || 500).json({

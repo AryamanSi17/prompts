@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Upload, Heart, MessageCircle, User as UserIcon, Terminal, BookOpen, AlertCircle } from 'lucide-react';
+import { Upload, MessageCircle, User as UserIcon, Terminal, BookOpen, AlertCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import API, { API_BASE, getMediaUrl } from '../utils/api';
 
@@ -59,18 +59,6 @@ function Feed() {
         }
     };
 
-    const handleLike = async (postId) => {
-        try {
-            const data = await API.posts.like(postId);
-            setPosts(posts.map(p =>
-                p._id === postId
-                    ? { ...p, isLiked: data.isLiked, likesCount: data.likesCount }
-                    : p
-            ));
-        } catch (err) {
-            addToast(err.message, 'error');
-        }
-    };
 
     const loadMorePosts = useCallback(() => {
 
@@ -199,25 +187,6 @@ function Feed() {
 
                             <div style={{ padding: '16px' }}>
                                 <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
-                                    <button
-                                        onClick={() => handleLike(post._id)}
-                                        style={{
-                                            background: 'none',
-                                            border: 'none',
-                                            padding: '8px',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            gap: '6px',
-                                            color: post.isLiked ? 'var(--accent)' : 'inherit',
-                                            cursor: 'pointer'
-                                        }}
-                                    >
-                                        <Heart
-                                            size={20}
-                                            fill={post.isLiked ? 'var(--accent)' : 'none'}
-                                        />
-                                        <span style={{ fontSize: '14px' }}>{post.likesCount || 0}</span>
-                                    </button>
                                     <button
                                         style={{
                                             background: 'none',

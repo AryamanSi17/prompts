@@ -122,7 +122,7 @@ function Navbar({ user, setUser }) {
                 backdropFilter: 'blur(15px)',
                 zIndex: 1000
             }}>
-                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 0, gap: '12px' }}>
+                <div className="container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: 0, gap: '24px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexShrink: 0 }}>
                         <Link to="/" style={{ textDecoration: 'none', color: '#fff' }}>
                             <h2 className="ndot" style={{ fontSize: '18px', margin: 0, whiteSpace: 'nowrap' }}>
@@ -130,10 +130,9 @@ function Navbar({ user, setUser }) {
                             </h2>
                         </Link>
                     </div>
-                    <div style={{ flex: 1, display: 'flex', justifyContent: 'center', maxWidth: '500px' }}>
+                    <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-end', maxWidth: '600px' }}>
                         <UserSearch />
                     </div>
-                    <div style={{ width: '100px' }} className="mobile-hide"></div>
                 </div>
             </nav>
 

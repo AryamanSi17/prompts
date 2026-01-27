@@ -138,7 +138,7 @@ function Profile() {
                             <h1 style={{ fontSize: '28px', fontWeight: '600' }}>
                                 {profile.displayName || profile.username}
                             </h1>
-                            {isOwnProfile && (
+                            {isOwnProfile ? (
                                 <button
                                     onClick={() => navigate('/settings')}
                                     style={{
@@ -151,8 +151,7 @@ function Profile() {
                                     <Settings size={16} />
                                     edit
                                 </button>
-                            )}
-                            {!isOwnProfile && (
+                            ) : (
                                 <button
                                     onClick={handleFollow}
                                     className={following ? '' : 'primary'}

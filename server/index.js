@@ -41,6 +41,7 @@ process.on('unhandledRejection', (reason, promise) => {
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 app.use(async (req, res, next) => {
     if (mongoose.connection.readyState !== 1) {
         await connectDB();
@@ -50,12 +51,10 @@ app.use(async (req, res, next) => {
 
 app.use((req, res, next) => {
     const origin = req.headers.origin;
-    const allowedOrigins = ['https://nanoprompts.space', 'https://www.nanoprompts.space', 'http://localhost:3000', 'http://localhost:5173'];
+    const allowedOrigins = ['https://nanoprompts.space', 'https://www.nanoprompts.space', 'http://localhost:3000'];
 
     if (origin && (allowedOrigins.includes(origin) || origin.includes('localhost'))) {
         res.setHeader('Access-Control-Allow-Origin', origin);
-    } else if (!origin) {
-        res.setHeader('Access-Control-Allow-Origin', '*');
     }
 
     res.setHeader('Vary', 'Origin');
@@ -69,6 +68,7 @@ app.use((req, res, next) => {
     next();
 });
 
+// 4. ROUTES
 app.get('/', (req, res) => {
     res.json({
         message: 'nano prompts API',
@@ -80,15 +80,18 @@ app.get('/', (req, res) => {
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/prompts', require('./routes/prompts'));
 app.use('/api/posts', require('./routes/posts'));
 app.use('/api/users', require('./routes/users'));
 
+// Health check
 app.get('/health', (req, res) => {
     res.json({ status: 'ok', db: mongoose.connection.readyState });
 });
 
+// 5. GLOBAL ERROR HANDLER
 app.use((err, req, res, next) => {
     console.error('SERVER ERROR:', err);
     res.status(err.status || 500).json({

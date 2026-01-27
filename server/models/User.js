@@ -6,8 +6,8 @@ const UserSchema = new mongoose.Schema({
     password: { type: String, required: true },
     username: { type: String, required: true, unique: true, lowercase: true, trim: true },
     isVerified: { type: Boolean, default: false },
-    verificationOTP: { type: String },
-    otpExpiry: { type: Date },
+    otp: { type: String },
+    otpExpires: { type: Date },
     displayName: { type: String, default: '' },
     bio: { type: String, default: '', maxlength: 300 },
     avatar: { type: String, default: '' },
@@ -16,43 +16,27 @@ const UserSchema = new mongoose.Schema({
     followingCount: { type: Number, default: 0 },
     postsCount: { type: Number, default: 0 },
     apiKey: { type: String },
-    isGenerating: { type: Boolean, default: false },
-    lastGeneration: { type: String },
-    createdAt: { type: Date, default: Date.now },
-    lastLogin: { type: Date }
+    createdAt: { type: Date, default: Date.now }
 }, {
     timestamps: true
 });
 
 UserSchema.index({ username: 'text', displayName: 'text' });
 
-
-UserSchema.pre('save', async function () {
-    if (!this.isModified('password')) return;
+UserSchema.pre('save', async function (next) {
+    if (!this.isModified('password')) return next();
 
     try {
         const salt = await bcrypt.genSalt(10);
         this.password = await bcrypt.hash(this.password, salt);
+        next();
     } catch (error) {
-        throw error;
+        next(error);
     }
 });
 
 UserSchema.methods.comparePassword = async function (candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password);
-};
-
-UserSchema.methods.generateOTP = function () {
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    this.verificationOTP = otp;
-    this.otpExpiry = new Date(Date.now() + 10 * 60 * 1000);
-    return otp;
-};
-
-UserSchema.methods.verifyOTP = function (otp) {
-    if (!this.verificationOTP || !this.otpExpiry) return false;
-    if (Date.now() > this.otpExpiry) return false;
-    return this.verificationOTP === otp;
 };
 
 module.exports = mongoose.model('User', UserSchema);

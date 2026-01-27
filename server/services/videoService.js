@@ -2,7 +2,6 @@ const ffmpeg = require('fluent-ffmpeg');
 const path = require('path');
 const fs = require('fs');
 
-// Compress video to 720p MP4
 const compressVideo = (inputPath, outputPath, onProgress) => {
     return new Promise((resolve, reject) => {
         const quality = process.env.VIDEO_COMPRESSION_QUALITY || '720';
@@ -10,7 +9,7 @@ const compressVideo = (inputPath, outputPath, onProgress) => {
         ffmpeg(inputPath)
             .output(outputPath)
             .videoCodec('libx264')
-            .size(`?x${quality}`) // Maintain aspect ratio, height = 720
+            .size(`?x${quality}`)
             .videoBitrate('1500k')
             .audioCodec('aac')
             .audioBitrate('128k')
@@ -25,9 +24,6 @@ const compressVideo = (inputPath, outputPath, onProgress) => {
                 console.log(`Processing: ${progress.percent}% done`);
             })
             .on('end', () => {
-                console.log('Video compression completed');
-
-                // Get file sizes
                 const originalSize = fs.statSync(inputPath).size;
                 const compressedSize = fs.statSync(outputPath).size;
 
@@ -46,7 +42,6 @@ const compressVideo = (inputPath, outputPath, onProgress) => {
     });
 };
 
-// Generate video thumbnail
 const generateThumbnail = (videoPath, thumbnailPath, timeInSeconds = 1) => {
     return new Promise((resolve, reject) => {
         ffmpeg(videoPath)
@@ -57,17 +52,14 @@ const generateThumbnail = (videoPath, thumbnailPath, timeInSeconds = 1) => {
                 size: '640x?'
             })
             .on('end', () => {
-                console.log('Thumbnail generated:', thumbnailPath);
                 resolve(thumbnailPath);
             })
             .on('error', (err) => {
-                console.error('Error generating thumbnail:', err);
                 reject(err);
             });
     });
 };
 
-// Get video duration
 const getVideoDuration = (videoPath) => {
     return new Promise((resolve, reject) => {
         ffmpeg.ffprobe(videoPath, (err, metadata) => {

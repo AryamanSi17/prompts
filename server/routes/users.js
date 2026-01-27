@@ -5,8 +5,8 @@ const auth = require('../middleware/auth');
 const uploadService = require('../services/uploadService');
 
 router.get('/search', userController.searchUsers);
-router.get('/:username', userController.getProfile);
-router.put('/profile', auth, uploadService.upload.single('avatar'), userController.updateProfile);
+router.get('/:username', auth.optionalAuth, userController.getProfile);
+router.put('/profile', auth, uploadService.uploadAvatar, userController.updateProfile);
 router.post('/:id/follow', auth, userController.followUser);
 router.delete('/:id/follow', auth, userController.unfollowUser);
 

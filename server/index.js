@@ -51,16 +51,9 @@ app.use(async (req, res, next) => {
 
 app.use((req, res, next) => {
     const origin = req.headers.origin;
-    const allowedOrigins = [
-        'https://nanoprompts.space',
-        'https://www.nanoprompts.space',
-        'http://localhost:3000',
-        'http://localhost:5173',
-        'http://127.0.0.1:5173',
-        'http://127.0.0.1:3000'
-    ];
+    const allowedOrigins = ['https://nanoprompts.space', 'https://www.nanoprompts.space', 'http://localhost:3000'];
 
-    if (origin && (allowedOrigins.includes(origin) || origin.includes('localhost') || origin.includes('127.0.0.1'))) {
+    if (origin && (allowedOrigins.includes(origin) || origin.includes('localhost'))) {
         res.setHeader('Access-Control-Allow-Origin', origin);
     }
 

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Settings, Book, AlignLeft, User as UserIcon, Rss, Search, Sparkles } from 'lucide-react';
 
 import UserSearch from './UserSearch';
@@ -7,16 +7,22 @@ import { API_BASE, getMediaUrl } from '../utils/api';
 
 function Navbar({ user, setUser }) {
     const navigate = useNavigate();
+    const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showMobileSearch, setShowMobileSearch] = useState(false);
-
 
     const handleLogout = () => {
         localStorage.clear(); // Clear everything
         window.location.href = '/'; // Hard refresh and redirect to home
     };
 
-
+    // Helper function to check if route is active
+    const isActive = (path) => {
+        if (path === '/') {
+            return location.pathname === '/';
+        }
+        return location.pathname.startsWith(path);
+    };
 
     const NavLinks = () => (
         <>
@@ -40,29 +46,99 @@ function Navbar({ user, setUser }) {
                 <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>search</span>
             </button>
 
-            <Link to="/library" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">
+            <Link
+                to="/library"
+                onClick={() => setIsMenuOpen(false)}
+                style={{
+                    color: isActive('/library') ? '#fff' : 'var(--text-dim)',
+                    textDecoration: 'none',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '12px',
+                    transition: 'all 0.3s'
+                }}
+                className="nav-item"
+            >
                 <Book size={20} />
                 <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>library</span>
             </Link>
 
-            <Link to="/dashboard" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">
+            <Link
+                to="/dashboard"
+                onClick={() => setIsMenuOpen(false)}
+                style={{
+                    color: isActive('/dashboard') ? '#fff' : 'var(--text-dim)',
+                    textDecoration: 'none',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '12px',
+                    transition: 'all 0.3s'
+                }}
+                className="nav-item"
+            >
                 <Sparkles size={20} />
                 <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>playground</span>
             </Link>
 
-            <Link to="/text-prompts" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">
+            <Link
+                to="/text-prompts"
+                onClick={() => setIsMenuOpen(false)}
+                style={{
+                    color: isActive('/text-prompts') ? '#fff' : 'var(--text-dim)',
+                    textDecoration: 'none',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px',
+                    padding: '12px',
+                    transition: 'all 0.3s'
+                }}
+                className="nav-item"
+            >
                 <AlignLeft size={20} />
                 <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>text</span>
             </Link>
 
             {user ? (
                 <>
-                    <Link to="/feed" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">
+                    <Link
+                        to="/feed"
+                        onClick={() => setIsMenuOpen(false)}
+                        style={{
+                            color: isActive('/feed') ? '#fff' : 'var(--text-dim)',
+                            textDecoration: 'none',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '12px',
+                            transition: 'all 0.3s'
+                        }}
+                        className="nav-item"
+                    >
                         <Rss size={20} />
                         <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>feed</span>
                     </Link>
 
-                    <Link to={`/profile/${user.username}`} onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">
+                    <Link
+                        to={`/profile/${user.username}`}
+                        onClick={() => setIsMenuOpen(false)}
+                        style={{
+                            color: isActive('/profile') ? '#fff' : 'var(--text-dim)',
+                            textDecoration: 'none',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '12px',
+                            transition: 'all 0.3s'
+                        }}
+                        className="nav-item"
+                    >
                         <div style={{
                             width: '24px',
                             height: '24px',
@@ -88,14 +164,42 @@ function Navbar({ user, setUser }) {
                         <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>profile</span>
                     </Link>
 
-                    <Link to="/settings" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">
+                    <Link
+                        to="/settings"
+                        onClick={() => setIsMenuOpen(false)}
+                        style={{
+                            color: isActive('/settings') ? '#fff' : 'var(--text-dim)',
+                            textDecoration: 'none',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '12px',
+                            transition: 'all 0.3s'
+                        }}
+                        className="nav-item"
+                    >
                         <Settings size={20} />
                         <span style={{ fontSize: '11px', fontWeight: 500, textTransform: 'lowercase' }}>settings</span>
                     </Link>
 
                 </>
             ) : (
-                <Link to="/auth" onClick={() => setIsMenuOpen(false)} style={{ color: 'var(--text-dim)', textDecoration: 'none', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', padding: '12px', transition: 'all 0.3s' }} className="nav-item">
+                <Link
+                    to="/auth"
+                    onClick={() => setIsMenuOpen(false)}
+                    style={{
+                        color: isActive('/auth') ? '#fff' : 'var(--text-dim)',
+                        textDecoration: 'none',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: '8px',
+                        padding: '12px',
+                        transition: 'all 0.3s'
+                    }}
+                    className="nav-item"
+                >
                     <div style={{
                         width: '24px',
                         height: '24px',

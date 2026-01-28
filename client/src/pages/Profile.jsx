@@ -94,7 +94,7 @@ function Profile() {
         );
     }
 
-    const isOwnProfile = profile.isOwnProfile;
+    const isOwnProfile = profile.isOwnProfile || (currentUser.username && currentUser.username.toLowerCase() === profile.username.toLowerCase());
 
     return (
         <main className="container" style={{ padding: '80px 20px', maxWidth: '1000px' }}>
@@ -151,7 +151,7 @@ function Profile() {
                                     <Settings size={16} />
                                     edit
                                 </button>
-                            ) : (
+                            ) : currentUser.username ? (
                                 <button
                                     onClick={handleFollow}
                                     className={following ? '' : 'primary'}
@@ -159,7 +159,7 @@ function Profile() {
                                 >
                                     {following ? 'following' : 'follow'}
                                 </button>
-                            )}
+                            ) : null}
                         </div>
 
                         <div style={{

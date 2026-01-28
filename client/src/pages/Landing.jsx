@@ -47,10 +47,10 @@ function Landing({ user }) {
                         the world's<br />best <span style={{ color: 'var(--accent)' }}>prompt library</span>.
                     </h1>
                     <p style={{ fontSize: 'min(16px, 4vw)', color: 'var(--text-dim)', maxWidth: '650px', margin: '0 auto 40px', textTransform: 'lowercase', lineHeight: '1.6' }}>
-                        nano prompts is a curated library of high-performance prompt presets designed for nano banana, gemini nano, and modern ai img models.
+                        discover the ultimate nano prompts library with 10,000+ curated ai prompt presets for nano banana pro, google gemini nano, and gpt-4. free prompt engineering templates for text generation, image creation, and professional ai workflows.
                     </p>
                     <p style={{ fontSize: 'min(18px, 4.5vw)', color: '#fff', maxWidth: '600px', margin: '0 auto 40px', textTransform: 'lowercase', fontWeight: '600' }}>
-                        stop prompt guessing. start generating.
+                        browse our prompts library. stop guessing. start generating.
                     </p>
                     <div style={{ display: 'flex', gap: '16px', justifyContent: 'center', flexWrap: 'wrap' }}>
                         <Link to="/library">

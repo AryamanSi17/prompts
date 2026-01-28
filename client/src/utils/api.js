@@ -155,6 +155,22 @@ class API {
             this.request(`/users/search?q=${encodeURIComponent(query)}&limit=${limit}`, { auth: false }),
 
     };
+
+    prompts = {
+        getPrompts: (params = {}) => {
+            const query = new URLSearchParams();
+            Object.entries(params).forEach(([key, value]) => {
+                if (value !== undefined && value !== null && value !== '') {
+                    query.append(key, value);
+                }
+            });
+            return this.request(`/prompts?${query.toString()}`, { auth: false });
+        },
+        getById: (id) => this.request(`/prompts/${id}`, { auth: false }),
+        create: (data) => this.request('/prompts', { method: 'POST', body: JSON.stringify(data) }),
+        update: (id, data) => this.request(`/prompts/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+        delete: (id) => this.request(`/prompts/${id}`, { method: 'DELETE' }),
+    };
 }
 
 export const getMediaUrl = (path) => {

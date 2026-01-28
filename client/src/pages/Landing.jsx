@@ -46,9 +46,6 @@ function Landing({ user }) {
                     <h1 className="ndot" style={{ fontSize: 'min(80px, 12vw)', lineHeight: '1.1', marginBottom: '24px', textTransform: 'lowercase' }}>
                         the world's<br />best <span style={{ color: 'var(--accent)' }}>prompt library</span>.
                     </h1>
-                    <p style={{ fontSize: 'min(20px, 5vw)', color: 'var(--text-dim)', maxWidth: '750px', margin: '0 auto 20px', textTransform: 'lowercase' }}>
-                        built for people who actually use ai.
-                    </p>
                     <p style={{ fontSize: 'min(16px, 4vw)', color: 'var(--text-dim)', maxWidth: '650px', margin: '0 auto 40px', textTransform: 'lowercase', lineHeight: '1.6' }}>
                         nano prompts is a curated library of high-performance prompt presets designed for nano banana, gemini nano, and modern ai workflows.
                     </p>

@@ -19,23 +19,27 @@ function TextPrompts() {
     const fetchPrompts = useCallback(async (pageNum, query = '') => {
         setLoading(true);
         try {
-            const response = await fetch(`${API_BASE}/api/prompts?page=${pageNum}&limit=10&search=${query}&type=photo`);
-            const data = await response.json();
-
+            const data = await API.prompts.getPrompts({
+                page: pageNum,
+                limit: 10,
+                search: query,
+                type: 'photo'
+            });
 
             if (pageNum === 1) {
-                setPrompts(data);
+                setPrompts(data.prompts || []);
             } else {
-                setPrompts(prev => [...prev, ...data]);
+                setPrompts(prev => [...prev, ...(data.prompts || [])]);
             }
 
-            setHasMore(data.length === 10);
+            setHasMore(data.page < data.pages);
         } catch (error) {
             console.error('Failed to fetch prompts:', error);
+            addToast('failed to fetch prompts', 'error');
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [addToast]);
 
     useEffect(() => {
         const timer = setTimeout(() => {
@@ -127,11 +131,11 @@ function TextPrompts() {
                                 opacity: 0.8,
                                 wordBreak: 'break-word'
                             }}>
-                                "{p.content}"
+                                "{p.prompt}"
                             </p>
                         </div>
                         <button
-                            onClick={() => handleCopy(p._id, p.content)}
+                            onClick={() => handleCopy(p._id, p.prompt)}
                             style={{
                                 padding: '10px',
                                 borderRadius: '4px',

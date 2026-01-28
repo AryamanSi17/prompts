@@ -14,7 +14,7 @@ const seed = async () => {
         const videoPrompts = videoPromptTemplate.flatMap(cat =>
             cat.prompts.map(p => ({
                 title: cat.category,
-                content: p,
+                prompt: p,
                 type: 'video',
                 category: cat.category
             }))
@@ -29,8 +29,7 @@ const seed = async () => {
                 if (photoPrompts.length < 10000) { // Increased for better library experience
                     photoPrompts.push({
                         title: data.title,
-                        description: data.description,
-                        content: data.content,
+                        prompt: data.content,
                         type: 'photo',
                         category: data.category || 'photo styles'
                     });

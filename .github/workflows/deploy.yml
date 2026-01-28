@@ -21,29 +21,30 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SERVER_PORT || 22 }}
           script: |
-            # Navigate to the project directory
-            cd ~/prompts
+            # Ensure directory exists or clone if first time
+            if [ ! -d "$HOME/prompts" ]; then
+                mkdir -p $HOME/prompts
+            fi
+            cd $HOME/prompts
             
-            # Pull the latest changes
-            git pull origin main
+            # If it's an empty directory, clone it
+            if [ ! -d ".git" ]; then
+                git clone https://github.com/${{ github.repository }} .
+            else
+                git pull origin main
+            fi
             
-            # Setup Server
-            console.log("Setting up Backend...")
             cd server
             npm install --production
             
-            # Restart the server using PM2
-            # Assumes you have a pm2 process named 'prompts-server'
-            # If not, run 'pm2 start index.js --name prompts-server' manually once on the server
             pm2 restart prompts-server || pm2 start index.js --name prompts-server
             
-            # Setup Client
-            console.log("Setting up Frontend...")
             cd ../client
             npm install
             npm run build
             
+            
             # If you are serving the client via Nginx, the build is now in client/dist
             # If you are serving via the server (express.static), ensure the server points to ../client/dist
             
-            echo "Deployment successful!"
+            

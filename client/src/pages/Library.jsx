@@ -260,6 +260,7 @@ function Library() {
                     >
                         <button
                             onClick={() => setSelectedPrompt(null)}
+                            className="close-btn"
                             style={{
                                 position: 'absolute',
                                 top: '16px',
@@ -365,22 +366,45 @@ function Library() {
                     to { transform: scale(1); opacity: 1; }
                 }
 
-                @media (max-width: 900px) {
+                @media (max-width: 600px) {
                     .modal-content { 
                         flex-direction: column !important; 
-                        max-height: 95vh !important;
-                        width: 95% !important;
+                        height: auto !important;
+                        max-height: 80vh !important;
+                        width: 90% !important;
+                        border-radius: 12px;
+                        border: 1px solid rgba(255,255,255,0.1);
+                        overflow: visible !important; /* Allow button to overflow or keep inside */
                     }
                     .modal-image-container { 
-                        height: 300px !important; 
+                        height: 140px !important; 
                         flex: none !important; 
+                        border-radius: 12px 12px 0 0;
+                        overflow: hidden;
+                        background: #000;
                     }
                     .modal-info-container { 
                         flex: 1 !important; 
-                        padding: 24px !important;
+                        padding: 16px !important;
+                        overflow-y: auto;
                     }
                     .modal-content h2 {
-                        font-size: 24px !important;
+                        font-size: 16px !important;
+                        margin-bottom: 4px !important;
+                    }
+                    .modal-content .close-btn {
+                        top: 8px !important;
+                        right: 8px !important;
+                        background: #ff0000 !important;
+                        width: 34px !important;
+                        height: 34px !important;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+                        border: 1px solid rgba(255,255,255,0.3) !important;
+                        z-index: 500 !important;
+                    }
+                    .modal-content .close-btn svg {
+                        width: 18px !important;
+                        height: 18px !important;
                     }
                 }
             `}</style>

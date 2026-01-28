@@ -32,6 +32,23 @@ const PromptSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
     },
+    description: {
+        type: String,
+        trim: true
+    },
+    image: {
+        type: String,
+        trim: true
+    },
+    author: {
+        type: String,
+        trim: true
+    },
+    isLibrary: {
+        type: Boolean,
+        default: false,
+        index: true
+    },
     usageCount: {
         type: Number,
         default: 0

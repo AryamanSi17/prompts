@@ -13,10 +13,15 @@ class PromptService {
             limit = 10,
             search = '',
             type = '',
+            isLibrary = null,
             sort = 'newest'
         } = filters;
 
         const query = {};
+
+        if (isLibrary !== null) {
+            query.isLibrary = isLibrary === 'true' || isLibrary === true;
+        }
 
         // Search functionality
         if (search) {

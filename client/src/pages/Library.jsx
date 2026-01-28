@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Search, Sparkles, Book, CheckCircle, X } from 'lucide-react';
 import { useToast } from '../context/ToastContext';
-import { libraryPrompts } from '../data/libraryData';
+import { API_BASE } from '../utils/api';
 import Image from '../components/Image';
 
-
 function Library() {
+    const [prompts, setPrompts] = useState([]);
+    const [loading, setLoading] = useState(true);
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [visibleCount, setVisibleCount] = useState(12);
@@ -15,6 +16,8 @@ function Library() {
 
     useEffect(() => {
         document.title = 'library | nano prompts.';
+        fetchLibraryPrompts();
+
         if (selectedPrompt) {
             document.body.style.overflow = 'hidden';
         } else {
@@ -23,16 +26,31 @@ function Library() {
         return () => { document.body.style.overflow = 'unset'; };
     }, [selectedPrompt]);
 
-    const categories = useMemo(() => ['all', ...new Set(libraryPrompts.map(p => p.category))], []);
+    const fetchLibraryPrompts = async () => {
+        try {
+            setLoading(true);
+            const response = await fetch(`${API_BASE}/api/prompts?isLibrary=true&limit=100`);
+            const data = await response.json();
+            const fetchedPrompts = Array.isArray(data) ? data : (data.prompts || []);
+            setPrompts(fetchedPrompts);
+        } catch (error) {
+            console.error('Failed to fetch library prompts:', error);
+            addToast('failed to load library prompts', 'error');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const categories = useMemo(() => ['all', ...new Set(prompts.map(p => p.category))], [prompts]);
 
     const filteredPrompts = useMemo(() => {
-        return libraryPrompts.filter(p => {
+        return prompts.filter(p => {
             const matchesSearch = p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                p.description.toLowerCase().includes(searchQuery.toLowerCase());
+                (p.description || '').toLowerCase().includes(searchQuery.toLowerCase());
             const matchesCategory = selectedCategory === 'all' || p.category === selectedCategory;
             return matchesSearch && matchesCategory;
         });
-    }, [searchQuery, selectedCategory]);
+    }, [prompts, searchQuery, selectedCategory]);
 
     const handleCopy = (id, text) => {
         navigator.clipboard.writeText(text);
@@ -106,9 +124,14 @@ function Library() {
                 gap: '24px',
                 alignItems: 'start'
             }}>
-                {filteredPrompts.slice(0, visibleCount).map(p => (
+                {loading ? (
+                    <div style={{ gridColumn: '1/-1', textAlign: 'center', padding: '100px 0' }}>
+                        <div className="spinner" style={{ margin: '0 auto 20px' }}></div>
+                        <p style={{ color: 'var(--text-dim)', textTransform: 'lowercase' }}>loading engines...</p>
+                    </div>
+                ) : filteredPrompts.slice(0, visibleCount).map(p => (
                     <div
-                        key={p.id}
+                        key={p._id || p.id}
                         className="glass"
                         style={{
                             overflow: 'hidden',
@@ -160,21 +183,21 @@ function Library() {
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        handleCopy(p.id, p.prompt);
+                                        handleCopy(p._id || p.id, p.prompt);
                                     }}
                                     style={{
                                         padding: '6px 12px',
                                         width: '100px',
                                         fontSize: '10px',
-                                        background: copiedId === p.id ? 'var(--accent)' : 'rgba(255,255,255,0.1)',
-                                        color: copiedId === p.id ? '#000' : '#fff',
+                                        background: copiedId === (p._id || p.id) ? 'var(--accent)' : 'rgba(255,255,255,0.1)',
+                                        color: copiedId === (p._id || p.id) ? '#000' : '#fff',
                                         border: '1px solid var(--border)',
                                         textTransform: 'lowercase',
                                         fontWeight: 600,
                                         transition: 'all 0.2s ease'
                                     }}
                                 >
-                                    {copiedId === p.id ? 'copied' : 'copy prompt'}
+                                    {copiedId === (p._id || p.id) ? 'copied' : 'copy prompt'}
                                 </button>
                             </div>
                         </div>
@@ -303,12 +326,12 @@ function Library() {
 
                             <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                                 <button
-                                    onClick={() => handleCopy(selectedPrompt.id, selectedPrompt.prompt)}
+                                    onClick={() => handleCopy(selectedPrompt._id || selectedPrompt.id, selectedPrompt.prompt)}
                                     style={{
                                         flex: 1,
                                         padding: '16px',
                                         fontSize: '12px',
-                                        background: copiedId === selectedPrompt.id ? 'var(--accent)' : '#fff',
+                                        background: copiedId === (selectedPrompt._id || selectedPrompt.id) ? 'var(--accent)' : '#fff',
                                         color: '#000',
                                         border: 'none',
                                         fontWeight: 700,
@@ -316,7 +339,7 @@ function Library() {
                                         transition: 'all 0.3s ease'
                                     }}
                                 >
-                                    {copiedId === selectedPrompt.id ? 'copied successfully' : 'copy engine prompt'}
+                                    {copiedId === (selectedPrompt._id || selectedPrompt.id) ? 'copied successfully' : 'copy engine prompt'}
                                 </button>
                             </div>
 

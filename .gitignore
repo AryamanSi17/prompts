@@ -29,5 +29,3 @@ yarn-error.log*
 *.swp
 *.swo
 
-# Project specific
-server/nano-banana-pro-prompts-20260124.csv

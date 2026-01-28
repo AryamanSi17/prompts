@@ -1,0 +1,49 @@
+name: Deploy to Server
+
+on:
+  push:
+    branches:
+      - main  # or master, depending on your default branch name
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SERVER_PORT || 22 }}
+          script: |
+            # Navigate to the project directory
+            cd ~/prompts
+            
+            # Pull the latest changes
+            git pull origin main
+            
+            # Setup Server
+            console.log("Setting up Backend...")
+            cd server
+            npm install --production
+            
+            # Restart the server using PM2
+            # Assumes you have a pm2 process named 'prompts-server'
+            # If not, run 'pm2 start index.js --name prompts-server' manually once on the server
+            pm2 restart prompts-server || pm2 start index.js --name prompts-server
+            
+            # Setup Client
+            console.log("Setting up Frontend...")
+            cd ../client
+            npm install
+            npm run build
+            
+            # If you are serving the client via Nginx, the build is now in client/dist
+            # If you are serving via the server (express.static), ensure the server points to ../client/dist
+            
+            echo "Deployment successful!"

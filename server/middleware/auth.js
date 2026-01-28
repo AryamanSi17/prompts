@@ -57,8 +57,8 @@ const generateToken = (userId) => {
     );
 };
 
-module.exports = {
-    authMiddleware,
-    optionalAuth,
-    generateToken
-};
+module.exports = authMiddleware;
+module.exports.authMiddleware = authMiddleware;
+module.exports.optionalAuth = optionalAuth;
+module.exports.generateToken = generateToken;
+

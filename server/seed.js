@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const fs = require('fs');
+const path = require('path');
 const csv = require('csv-parser');
 const Prompt = require('./models/Prompt');
 const { videoPromptTemplate } = require('./data/videoPrompts');
@@ -23,7 +24,13 @@ const seed = async () => {
 
         // Seed Photo Prompts from CSV
         const photoPrompts = [];
-        fs.createReadStream('./nano-banana-pro-prompts-20260124.csv')
+        const csvPath = path.join(__dirname, 'nano-banana-pro-prompts-20260124.csv');
+
+        if (!fs.existsSync(csvPath)) {
+            throw new Error(`CSV file not found at: ${csvPath}`);
+        }
+
+        fs.createReadStream(csvPath)
             .pipe(csv())
             .on('data', (data) => {
                 if (photoPrompts.length < 10000) { // Increased for better library experience

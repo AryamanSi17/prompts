@@ -42,14 +42,22 @@ class API {
             },
         };
 
-        const response = await fetch(url, config);
-        const data = await response.json();
+        try {
+            const response = await fetch(url, config);
+            const data = await response.json();
 
-        if (!response.ok) {
-            throw new Error(data.error || 'Request failed');
+            if (!response.ok) {
+                throw new Error(data.error || 'Request failed');
+            }
+
+            return data;
+        } catch (error) {
+            // Handle network errors
+            if (error.message === 'Failed to fetch' || error.name === 'TypeError') {
+                throw new Error('Unable to connect to server. Please check if the server is running.');
+            }
+            throw error;
         }
-
-        return data;
     }
 
     auth = {

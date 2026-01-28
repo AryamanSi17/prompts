@@ -71,10 +71,33 @@ class AuthService {
         });
 
         if (existingUser) {
+            // If user exists with same email but is not verified, allow re-registration
             if (existingUser.email === email) {
+                if (!existingUser.isVerified) {
+                    // Update the existing unverified user with new details
+                    const otp = this.generateOTP();
+                    const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
+
+                    existingUser.username = username.toLowerCase();
+                    existingUser.password = password;
+                    existingUser.otp = otp;
+                    existingUser.otpExpires = otpExpires;
+
+                    await existingUser.save();
+                    await this.sendOTPEmail(email, otp);
+
+                    return {
+                        message: 'OTP sent to email',
+                        userId: existingUser._id
+                    };
+                }
                 throw new Error('Email already registered');
             }
-            throw new Error('Username taken');
+
+            // If username is taken (even by unverified user), don't allow
+            if (existingUser.username === username.toLowerCase()) {
+                throw new Error('Username taken');
+            }
         }
 
         // Generate OTP

@@ -47,7 +47,7 @@ function Landing({ user }) {
                         the world's<br />best <span style={{ color: 'var(--accent)' }}>prompt library</span>.
                     </h1>
                     <p style={{ fontSize: 'min(16px, 4vw)', color: 'var(--text-dim)', maxWidth: '650px', margin: '0 auto 40px', textTransform: 'lowercase', lineHeight: '1.6' }}>
-                        discover the ultimate nano prompts library with 10,000+ curated ai prompt presets for nano banana pro, google gemini nano, and gpt-4. free prompt engineering templates for text generation, image creation, and professional ai workflows.
+                        discover the ultimate nano prompts library with 10,000+ curated ai prompt presets for gemini image tool, nano banana pro, and gpt based image generation. free prompt engineering templates for stunning image creation.
                     </p>
                     <p style={{ fontSize: 'min(18px, 4.5vw)', color: '#fff', maxWidth: '600px', margin: '0 auto 40px', textTransform: 'lowercase', fontWeight: '600' }}>
                         browse our prompts library. stop guessing. start generating.
@@ -81,7 +81,7 @@ function Landing({ user }) {
                             <Key size={32} style={{ marginBottom: '20px' }} />
                             <h3 style={{ marginBottom: '16px', textTransform: 'lowercase' }}>nano prompt presets</h3>
                             <p style={{ color: 'var(--text-dim)', fontSize: '14px', lineHeight: '1.6', textTransform: 'lowercase' }}>
-                                pre-architected, production-ready prompts for fast, consistent, and repeatable results across text and image generation.
+                                pre-architected, production-ready prompts for fast, consistent, and repeatable results across high-end image generation.
                             </p>
                         </div>
                         <div className="glass" style={{ padding: '40px' }}>
@@ -142,7 +142,7 @@ function Landing({ user }) {
             <section style={{ padding: '60px 0', borderTop: '1px solid var(--border)', background: 'rgba(0,0,0,0.5)' }}>
                 <div className="container" style={{ textAlign: 'center' }}>
                     <p style={{ fontSize: '12px', color: 'rgba(255,255,255,0.2)', maxWidth: '800px', margin: '0 auto', lineHeight: '2' }}>
-                        popular keywords: prompt presets, nano prompts library, best ai prompts for creators, gemini nano templates, banana pro prompt engineering, high-performance ai prompt systems, 10k+ prompt database, character and style presets.
+                        popular keywords: prompt presets, nano prompts library, best ai prompts for creators, gemini image tool, gpt image prompts, banana pro prompt engineering, 10k+ image prompt database, character and style presets.
                     </p>
                 </div>
             </section>

@@ -158,7 +158,7 @@ class API {
 }
 
 export const getMediaUrl = (path) => {
-    if (!path) return '';
+    if (!path || path === 'undefined' || path.includes('/undefined')) return '';
     if (path.startsWith('http')) return path;
     const base = API_BASE.replace(/\/$/, '');
     return `${base}${path}`;

@@ -1,6 +1,7 @@
 const Post = require('../models/Post');
 const User = require('../models/User');
 const videoService = require('./videoService');
+const uploadService = require('./uploadService');
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -65,18 +66,29 @@ class PostService {
         let thumbnailPath = null;
         if (isVideo) {
             try {
-                thumbnailPath = await videoService.generateThumbnail(file.path);
+                const videoInput = file.location || file.path;
+                const thumbName = `thumb-${Date.now()}.jpg`;
+                const tempThumbPath = path.join(uploadService.thumbnailsDir, thumbName);
+
+                await videoService.generateThumbnail(videoInput, tempThumbPath);
+
+                if (uploadService.isS3) {
+                    thumbnailPath = await uploadService.uploadFileToS3(tempThumbPath, `thumbnails/${thumbName}`, 'image/jpeg');
+                    // Delete local temp thumbnail
+                    require('fs').unlinkSync(tempThumbPath);
+                } else {
+                    thumbnailPath = `/uploads/thumbnails/${thumbName}`;
+                }
             } catch (error) {
                 console.error('Thumbnail generation failed:', error);
-                // Continue without thumbnail
             }
         }
 
         const post = new Post({
             userId,
             type: isVideo ? 'video' : 'photo',
-            mediaUrl: `/uploads/${file.filename}`,
-            thumbnail: thumbnailPath ? `/uploads/${path.basename(thumbnailPath)}` : null,
+            mediaUrl: file.location || `/uploads/${file.filename}`,
+            thumbnail: thumbnailPath,
             caption: caption || '',
             prompt: prompt || '',
             guide: guide || ''
@@ -110,13 +122,10 @@ class PostService {
 
         // Delete media files
         if (post.mediaUrl) {
-            const mediaPath = path.join(__dirname, '..', post.mediaUrl);
-            await fs.unlink(mediaPath).catch(() => { });
+            await uploadService.deleteFile(post.mediaUrl);
         }
-
         if (post.thumbnail) {
-            const thumbPath = path.join(__dirname, '..', post.thumbnail);
-            await fs.unlink(thumbPath).catch(() => { });
+            await uploadService.deleteFile(post.thumbnail);
         }
 
         await post.deleteOne();

@@ -79,7 +79,7 @@ class UserService {
         if (updates.website !== undefined) updateData.website = updates.website;
 
         if (avatarFile) {
-            updateData.avatar = `/uploads/${avatarFile.filename}`;
+            updateData.avatar = avatarFile.location || `/uploads/${avatarFile.filename}`;
         }
 
         const user = await User.findByIdAndUpdate(

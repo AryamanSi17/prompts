@@ -8,12 +8,10 @@ const nodemailer = require('nodemailer');
 class AuthService {
     constructor() {
         this.transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST,
-            port: process.env.SMTP_PORT,
-            secure: false,
+            service: 'gmail',
             auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASS
+                user: process.env.EMAIL_USER,
+                pass: process.env.EMAIL_PASSWORD
             }
         });
     }
@@ -30,7 +28,7 @@ class AuthService {
      */
     async sendOTPEmail(email, otp) {
         await this.transporter.sendMail({
-            from: process.env.SMTP_USER,
+            from: process.env.EMAIL_USER,
             to: email,
             subject: 'nano prompts - verify your email',
             html: `
@@ -71,33 +69,10 @@ class AuthService {
         });
 
         if (existingUser) {
-            // If user exists with same email but is not verified, allow re-registration
             if (existingUser.email === email) {
-                if (!existingUser.isVerified) {
-                    // Update the existing unverified user with new details
-                    const otp = this.generateOTP();
-                    const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
-
-                    existingUser.username = username.toLowerCase();
-                    existingUser.password = password;
-                    existingUser.otp = otp;
-                    existingUser.otpExpires = otpExpires;
-
-                    await existingUser.save();
-                    await this.sendOTPEmail(email, otp);
-
-                    return {
-                        message: 'OTP sent to email',
-                        userId: existingUser._id
-                    };
-                }
                 throw new Error('Email already registered');
             }
-
-            // If username is taken (even by unverified user), don't allow
-            if (existingUser.username === username.toLowerCase()) {
-                throw new Error('Username taken');
-            }
+            throw new Error('Username taken');
         }
 
         // Generate OTP
